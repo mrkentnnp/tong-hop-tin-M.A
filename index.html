@@ -1,9 +1,6 @@
 <!doctype html>
 <!--
-  TỔNG HỢP TIN — BẢN LIVE (1 file duy nhất)
-  Cách đưa lên hosting free:
-  1) Netlify: vào app.netlify.com/drop, kéo-thả file này (đổi tên thành index.html trước khi thả để mở đúng trang chủ).
-  2) Cloudflare Pages / Vercel: tạo project, upload file này với tên index.html.
+  TỔNG HỢP TIN — BẢN LIVE (1 file duy nhất, tên trên GitHub: index.html)
   Giá live cần có mạng khi mở trang: BTC lấy từ Binance, chỉ số Mỹ lấy từ Stooq/Yahoo (miễn phí, có thể trễ ~15 phút).
   Mở offline vẫn đọc được phần tin và giá ảnh chụp đóng cửa phiên 6/11/2026.
 -->
@@ -21,7 +18,7 @@
 .wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
 .dateline{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,5.4vw,46px);line-height:1.12;margin:8px 0 10px}
-.lede{color:var(--soft);max-width:64ch;margin:0;font-size:16.5px}
+.bottom-note{color:var(--faint);font-size:13.5px;line-height:1.55;max-width:72ch;margin:22px auto 0;text-align:center;border-top:1px solid var(--line);padding-top:16px}
 .livebar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13.5px}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--up);display:inline-block;margin-right:6px;animation:pulse 1.6s infinite}
 @keyframes pulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
@@ -41,6 +38,10 @@ button.refresh:active{transform:scale(.97)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.grid .wide{grid-column:1/-1}
 @media(max-width:720px){.grid{grid-template-columns:1fr}}
 section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.card.featured{border:2px solid var(--accent);box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.card.featured h2{font-size:26px}
+.card.featured .news .h{font-size:16.5px}
+.card.featured .news li{padding:14px 0}
 .card h2{font-family:Georgia,serif;font-size:21px;margin:0 0 4px;font-weight:600}
 .card h2 .tag{font-family:system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--teal-soft);color:var(--teal);white-space:nowrap;vertical-align:middle}
 .card h2 .tag.hot{background:var(--accent-soft);color:var(--accent)}
@@ -50,12 +51,8 @@ section.card{background:var(--surface);border:1px solid var(--line);border-radiu
 .alert{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--radius);padding:20px 22px}.alert h2{font-family:Georgia,serif;font-size:21px;margin:0 0 6px;color:var(--warn-ink)}.alert p{margin:0 0 10px}.alert .nums{display:flex;flex-wrap:wrap;gap:8px 22px;margin:12px 0;font-size:14px}.alert .nums b{font-size:19px}
 .news{list-style:none;margin:0;padding:0}.news li{padding:12px 0;border-bottom:1px solid var(--line)}.news li:first-child{padding-top:2px}.news li:last-child{border-bottom:none;padding-bottom:0}.news .h{font-weight:700;font-size:15.5px;margin-bottom:2px}.news p{margin:0;font-size:14.5px;color:var(--soft)}
 .ahead{list-style:none;margin:0;padding:0}.ahead li{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line)}.ahead li:last-child{border-bottom:none}.ahead .when{flex:0 0 86px;font-weight:800;font-size:13.5px;color:var(--accent);padding-top:2px}.ahead .what{font-size:15px}.ahead .what span{display:block;color:var(--soft);font-size:14px}
-.tasks{list-style:none;margin:0;padding:0}.tasks li{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}.tasks li:last-child{border-bottom:none}.tasks .n{flex:0 0 26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-weight:800;display:flex;align-items:center;justify-content:center}.tasks .d{color:var(--soft);font-size:14px;display:block}
-.answer{margin-top:14px;background:var(--teal-soft);border-radius:10px;padding:12px 14px;font-size:14.5px}.answer b{color:var(--teal)}
 .meter{margin-top:14px}.meter .track{height:10px;border-radius:999px;background:linear-gradient(90deg,#b3372e,#d98a2b 45%,#4d9e57);position:relative}.meter .pin{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translate(-50%,-50%)}.meter .labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:6px}
 footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
-.howto{font-size:14.5px}.howto ol{margin:8px 0 0;padding-left:20px}.howto li{margin-bottom:6px}
-code{background:var(--surface2);padding:1px 6px;border-radius:6px;font-size:13.5px}
 </style>
 </head>
 <body>
@@ -63,7 +60,6 @@ code{background:var(--surface2);padding:1px 6px;border-radius:6px;font-size:13.5
 <header>
 <div class="dateline" id="dateline">Thứ Bảy 7/11/2026</div>
 <h1>Tổng hợp tin</h1>
-<p class="lede">Giá Bitcoin, S&amp;P 500, Nasdaq và Dow Jones tự cập nhật khi có mạng — kèm tổng hợp tin cuối tuần: bão Kalmaegi, việc làm Mỹ, Berkshire Hathaway và các mốc tuần tới.</p>
 <div class="livebar" role="status">
 <span><span class="dot wait" id="livedot"></span><b id="livestatus">Đang kết nối lấy giá…</b></span>
 <span id="lastupdate">Lần cập nhật giá: —</span>
@@ -102,6 +98,19 @@ code{background:var(--surface2);padding:1px 6px;border-radius:6px;font-size:13.5
 <p class="fineprint">Cách đọc: khi lấy được giá live, mỗi ô sẽ ghi rõ <b>nguồn</b> và <b>giờ cập nhật</b>. Nếu ghi “ảnh chụp đóng cửa 6/11” thì đó <b>không phải</b> giá live. Bitcoin tự làm mới mỗi 20 giây; chứng khoán Mỹ mỗi 60 giây (ngoài giờ giao dịch Mỹ, giá đứng ở mức đóng cửa gần nhất). Đây là thông tin thị trường, không phải lời khuyên đầu tư.</p>
 
 <div class="grid">
+<section class="card wide featured">
+<h2>Tin đáng chú ý cuối tuần <span class="tag hot">Nổi bật</span></h2>
+<p class="sub">Những diễn biến lớn đang mở, chưa có hồi kết — tổng hợp đến tối 7/11/2026.</p>
+<ul class="news">
+<li><div class="h">Mỹ – Iran: đã có đòn đánh, vẫn đang đối thoại</div><p>Tối 6/11, ông Trump xác nhận Mỹ đánh “nhỏ” vào một hệ thống phòng không Iran ở đảo Qeshm (eo Hormuz). Iran nói đã bắn rơi drone MQ-9 — phía Mỹ chưa xác nhận, chưa có bằng chứng độc lập. Ngày 7/11, ông Trump nói Mỹ đang đối thoại với Iran.</p></li>
+<li><div class="h">Nhân sự Nhà Trắng: Stephen Miller làm Chánh văn phòng từ 9/11</div><p>Ông Trump bổ nhiệm Stephen Miller thay Susie Wiles, người chuyển sang bộ máy chính trị của Trump. Đây là thay đổi nhân sự lớn đầu tiên sau thất bại giữa kỳ của đảng Cộng hòa.</p></li>
+<li><div class="h">Thuế quan: ông Trump dọa mức 300%</div><p>Ngày 5/11, ông Trump nói sẽ giữ thuế quan và dọa áp 50%, 100%, thậm chí 300% với công ty nước ngoài không xây nhà máy ở Mỹ. Đây mới là phát biểu đe dọa — chưa phải mức thuế đã ban hành.</p></li>
+<li><div class="h">Sởi ở Mỹ: hơn 4.800 ca, cao nhất từ 1991</div><p>Các bang báo cáo 8 ca tử vong (CDC xác nhận 4). Ủy ban PAHO họp 10–13/11 để quyết định Mỹ có mất trạng thái loại trừ sởi hay không.</p></li>
+<li><div class="h">Châu Âu: làn sóng đe dọa bom giả vào hàng không</div><p>Ngày 5/11, ít nhất 21 chuyến bay ở 8 nước bị đe dọa bom; ngày 6/11 tiếp diễn ở Pháp, Czechia, Bồ Đào Nha, Đan Mạch. Không nơi nào tìm thấy chất nổ.</p></li>
+<li><div class="h">Spotlight: Trái Đất đang có một “mini-moon”</div><p>Tiểu hành tinh 2026 QQ8 — chỉ khoảng 1 mét — bị trọng lực Trái Đất bắt giữ tạm thời từ cuối tháng 4/2026 và sẽ rời đi vào tháng 12. Đây là mini-moon thứ ba được xác nhận, và là nhỏ nhất.</p></li>
+</ul>
+</section>
+
 <section class="card wide">
 <h2>Berkshire Hathaway công bố kết quả quý 3 — tối 7/11, 20:00 giờ VN</h2>
 <p class="sub">Báo cáo quý đầu tiên dưới thời CEO Greg Abel, nhậm chức từ 1/1/2026 sau khi Warren Buffett rời ghế chủ tịch hồi tháng 9. Cổ phiếu Class B đóng cửa ngày 5/11 ở 572,33 USD.</p>
@@ -138,16 +147,7 @@ code{background:var(--surface2);padding:1px 6px;border-radius:6px;font-size:13.5
 <div class="meter"><div class="track"><div class="pin" style="left:25%"></div></div><div class="labels"><span>0 · Sợ hãi cực độ</span><span><b style="color:var(--ink)">Fear &amp; Greed: 25</b></span><span>100 · Tham lam cực độ</span></div></div>
 </section>
 
-<section class="card">
-<h2>Học option — tuần 1 <span class="tag hot">Còn chờ bạn</span></h2>
-<p class="sub">3 bài tập thực hành, khoảng 10 phút. Làm xong mới sang OptionStrat và tài khoản paper trading.</p>
-<ol class="tasks">
-<li><span class="n">1</span><div><b>Bài 1 &amp; 2 — Thuật ngữ nền tảng</b><span class="d">Trả lời theo cách hiểu của mình; đáp án sẽ được đối chiếu sau khi bạn nộp.</span></div></li>
-<li><span class="n">3</span><div><b>Bài 3 — Đối chiếu đáo hạn Bitcoin thật</b><span class="d">Đợt đáo hạn 15h ngày 6/11 trên Deribit: khoảng 2,65 tỷ USD BTC (33.135 BTC), max pain quanh 79.000 USD.</span></div></li>
-</ol>
-<div class="answer"><b>Kết quả thật của Bài 3:</b> BTC chốt dưới 79.000 USD nên các Call Strike 79.000 USD đã đáo hạn vô giá trị — đúng kịch bản bài tập. Nhớ: max pain không phải dự báo giá.</div>
-<p class="fineprint">Nội dung giáo dục về option, không phải lời khuyên đầu tư.</p>
-</section>
+
 
 <section class="card">
 <h2>Chứng khoán Mỹ — phiên 6/11 <span class="tag">Ảnh chụp</span></h2>
@@ -158,20 +158,9 @@ code{background:var(--surface2);padding:1px 6px;border-radius:6px;font-size:13.5
 <div class="kv"><span class="k">VIX</span><span class="v">25,58</span></div>
 </section>
 
-<section class="card wide">
-<h2>Tin đáng chú ý cuối tuần</h2>
-<p class="sub">Những diễn biến lớn đang mở, chưa có hồi kết — tổng hợp đến tối 7/11/2026.</p>
-<ul class="news">
-<li><div class="h">Mỹ – Iran: đã có đòn đánh, vẫn đang đối thoại</div><p>Tối 6/11, ông Trump xác nhận Mỹ đánh “nhỏ” vào một hệ thống phòng không Iran ở đảo Qeshm (eo Hormuz). Iran nói đã bắn rơi drone MQ-9 — phía Mỹ chưa xác nhận, chưa có bằng chứng độc lập. Ngày 7/11, ông Trump nói Mỹ đang đối thoại với Iran.</p></li>
-<li><div class="h">Nhân sự Nhà Trắng: Stephen Miller làm Chánh văn phòng từ 9/11</div><p>Ông Trump bổ nhiệm Stephen Miller thay Susie Wiles, người chuyển sang bộ máy chính trị của Trump. Đây là thay đổi nhân sự lớn đầu tiên sau thất bại giữa kỳ của đảng Cộng hòa.</p></li>
-<li><div class="h">Thuế quan: ông Trump dọa mức 300%</div><p>Ngày 5/11, ông Trump nói sẽ giữ thuế quan và dọa áp 50%, 100%, thậm chí 300% với công ty nước ngoài không xây nhà máy ở Mỹ. Đây mới là phát biểu đe dọa — chưa phải mức thuế đã ban hành.</p></li>
-<li><div class="h">Sởi ở Mỹ: hơn 4.800 ca, cao nhất từ 1991</div><p>Các bang báo cáo 8 ca tử vong (CDC xác nhận 4). Ủy ban PAHO họp 10–13/11 để quyết định Mỹ có mất trạng thái loại trừ sởi hay không.</p></li>
-<li><div class="h">Châu Âu: làn sóng đe dọa bom giả vào hàng không</div><p>Ngày 5/11, ít nhất 21 chuyến bay ở 8 nước bị đe dọa bom; ngày 6/11 tiếp diễn ở Pháp, Czechia, Bồ Đào Nha, Đan Mạch. Không nơi nào tìm thấy chất nổ.</p></li>
-<li><div class="h">Spotlight: Trái Đất đang có một “mini-moon”</div><p>Tiểu hành tinh 2026 QQ8 — chỉ khoảng 1 mét — bị trọng lực Trái Đất bắt giữ tạm thời từ cuối tháng 4/2026 và sẽ rời đi vào tháng 12. Đây là mini-moon thứ ba được xác nhận, và là nhỏ nhất.</p></li>
-</ul>
-</section>
 
-<section class="card wide">
+
+<section class="card">
 <h2>Tuần tới nhìn trước</h2>
 <p class="sub">Ba mốc đáng ghim lịch.</p>
 <ul class="ahead">
@@ -181,17 +170,10 @@ code{background:var(--surface2);padding:1px 6px;border-radius:6px;font-size:13.5
 </ul>
 </section>
 
-<section class="card wide howto">
-<h2>Đưa file này lên hosting free</h2>
-<ol>
-<li><b>Netlify (dễ nhất):</b> đổi tên file thành <code>index.html</code> → vào <code>app.netlify.com/drop</code> → kéo-thả vào → có ngay địa chỉ dạng <code>tenban.netlify.app</code>.</li>
-<li><b>Cloudflare Pages:</b> vào Pages → Create → Upload assets → tải <code>index.html</code> lên → địa chỉ dạng <code>tenban.pages.dev</code>, băng thông miễn phí không giới hạn.</li>
-<li><b>Vercel:</b> tạo project mới và upload file <code>index.html</code> này → địa chỉ dạng <code>tenban.vercel.app</code> (gói free chỉ dùng cá nhân, phi thương mại).</li>
-</ol>
-<p class="small">Lưu ý: giá live cần internet khi mở trang. Gửi file cho người khác mở offline thì họ vẫn đọc được phần tin và giá ảnh chụp đóng cửa 6/11, chỉ không có giá live.</p>
-</section>
+
 </div>
 </main>
+<p class="bottom-note">Giá Bitcoin, S&amp;P 500, Nasdaq và Dow Jones tự cập nhật khi có mạng — kèm tổng hợp tin cuối tuần: bão Kalmaegi, việc làm Mỹ, Berkshire Hathaway và các mốc tuần tới.</p>
 <footer>Tổng hợp tin — phần tin tổng hợp đến tối thứ Bảy 7/11/2026 (giờ Việt Nam). Giá live lấy trực tiếp từ Binance (BTC) và Stooq/Yahoo Finance (chỉ số Mỹ, miễn phí nên có thể trễ ~15 phút) ngay trong trình duyệt của người xem.</footer>
 </div>
 
