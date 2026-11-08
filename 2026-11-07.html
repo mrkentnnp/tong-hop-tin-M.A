@@ -1,0 +1,291 @@
+<!doctype html>
+<!--
+  TỔNG HỢP TIN — BẢN LIVE (1 file duy nhất, tên trên GitHub: index.html)
+  Giá live cần có mạng khi mở trang: BTC lấy từ Binance, chỉ số Mỹ lấy từ Stooq/Yahoo (miễn phí, có thể trễ ~15 phút).
+  Mở offline vẫn đọc được phần tin và giá ảnh chụp đóng cửa phiên 6/11/2026.
+-->
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Tổng hợp tin</title>
+<style>
+:root{--bg:#f6f3ec;--surface:#fffdf8;--surface2:#efe9db;--ink:#1d2733;--soft:#4c5a68;--faint:#7c8a97;--line:#ddd5c3;--accent:#b4551f;--accent-soft:#f7e3d3;--teal:#14635d;--teal-soft:#dcebe7;--up:#177245;--down:#b3372e;--warn-bg:#fdf0dc;--warn-line:#e3b96a;--warn-ink:#6d4a08;--radius:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#131a21;--surface:#1c262f;--surface2:#232f3a;--ink:#eef2f4;--soft:#b3c0ca;--faint:#8696a2;--line:#33424e;--accent:#e08a4c;--accent-soft:#3a2a1c;--teal:#4db3a8;--teal-soft:#1e3533;--up:#4cc984;--down:#e87a70;--warn-bg:#35290f;--warn-line:#8a6a25;--warn-ink:#f0cd82}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
+.dateline{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,5.4vw,46px);line-height:1.12;margin:8px 0 10px}
+.bottom-note{color:var(--faint);font-size:13.5px;line-height:1.55;max-width:72ch;margin:22px auto 0;text-align:center;border-top:1px solid var(--line);padding-top:16px}
+.livebar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13.5px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--up);display:inline-block;margin-right:6px;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+.dot.err{background:var(--down);animation:none}.dot.wait{background:#d98a2b;animation:none}
+button.refresh{margin-left:auto;border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer;font-size:13.5px}
+button.refresh:active{transform:scale(.97)}
+.prices{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+@media(max-width:860px){.prices{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.prices{grid-template-columns:1fr}}
+.price{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.price .name{font-size:13px;font-weight:700;color:var(--soft);display:flex;justify-content:space-between;gap:8px}
+.price .sym{color:var(--faint);font-weight:600;font-size:12px}
+.price .val{font-size:clamp(24px,3.4vw,30px);font-weight:800;font-variant-numeric:tabular-nums;margin-top:4px}
+.price .chg{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.price .meta{font-size:12.5px;color:var(--faint);margin-top:8px;line-height:1.5}
+.up{color:var(--up)}.down{color:var(--down)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.grid .wide{grid-column:1/-1}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.card.featured{border:2px solid var(--accent);box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.card.featured h2{font-size:26px}
+.card.featured .news .h{font-size:16.5px}
+.card.featured .news li{padding:14px 0}
+.card h2{font-family:Georgia,serif;font-size:21px;margin:0 0 4px;font-weight:600}
+.card h2 .tag{font-family:system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--teal-soft);color:var(--teal);white-space:nowrap;vertical-align:middle}
+.card h2 .tag.hot{background:var(--accent-soft);color:var(--accent)}
+.card .sub{color:var(--faint);font-size:13.5px;margin:0 0 14px}.card p{margin:0 0 10px}.card p:last-child{margin-bottom:0}
+.small{font-size:14px;color:var(--soft)}.fineprint{font-size:12.5px;color:var(--faint);margin-top:12px}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14.5px}.kv:last-child{border-bottom:none}.kv .k{color:var(--soft)}.kv .v{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.alert{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--radius);padding:20px 22px}.alert h2{font-family:Georgia,serif;font-size:21px;margin:0 0 6px;color:var(--warn-ink)}.alert p{margin:0 0 10px}.alert .nums{display:flex;flex-wrap:wrap;gap:8px 22px;margin:12px 0;font-size:14px}.alert .nums b{font-size:19px}
+.news{list-style:none;margin:0;padding:0}.news li{padding:12px 0;border-bottom:1px solid var(--line)}.news li:first-child{padding-top:2px}.news li:last-child{border-bottom:none;padding-bottom:0}.news .h{font-weight:700;font-size:15.5px;margin-bottom:2px}.news p{margin:0;font-size:14.5px;color:var(--soft)}
+.ahead{list-style:none;margin:0;padding:0}.ahead li{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line)}.ahead li:last-child{border-bottom:none}.ahead .when{flex:0 0 86px;font-weight:800;font-size:13.5px;color:var(--accent);padding-top:2px}.ahead .what{font-size:15px}.ahead .what span{display:block;color:var(--soft);font-size:14px}
+.meter{margin-top:14px}.meter .track{height:10px;border-radius:999px;background:linear-gradient(90deg,#b3372e,#d98a2b 45%,#4d9e57);position:relative}.meter .pin{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translate(-50%,-50%)}.meter .labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:6px}
+footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="dateline" id="dateline">Thứ Bảy 7/11/2026</div>
+<h1>Tổng hợp tin</h1>
+<div class="livebar" role="status">
+<span><span class="dot wait" id="livedot"></span><b id="livestatus">Đang kết nối lấy giá…</b></span>
+<span id="lastupdate">Lần cập nhật giá: —</span>
+<span id="nextupdate"></span>
+<button class="refresh" id="refreshbtn" type="button">↻ Cập nhật ngay</button>
+</div>
+</header>
+
+<main>
+<section class="prices" aria-label="Giá trực tiếp">
+<article class="price" id="card-btc">
+<div class="name"><span>Bitcoin</span><span class="sym">BTC / USDT · Binance</span></div>
+<div class="val" data-field="price">≈ 76.000 USD</div>
+<div class="chg" data-field="chg">—</div>
+<div class="meta" data-field="meta">Ảnh chụp sáng 7/11: quanh 76.000 USD, vùng giằng co 75.000 USD.<br>Đang chờ giá live…</div>
+</article>
+<article class="price" id="card-spx">
+<div class="name"><span>S&amp;P 500</span><span class="sym">^SPX · dự phòng SPY</span></div>
+<div class="val" data-field="price">7.376,86</div>
+<div class="chg up" data-field="chg">+0,31% <span style="font-weight:500;color:var(--faint)">(đóng cửa 6/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 6/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+<article class="price" id="card-nasdaq">
+<div class="name"><span>Nasdaq</span><span class="sym">^IXIC · dự phòng QQQ</span></div>
+<div class="val" data-field="price">24.579,42</div>
+<div class="chg up" data-field="chg">+1,09% <span style="font-weight:500;color:var(--faint)">(đóng cửa 6/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 6/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+<article class="price" id="card-dow">
+<div class="name"><span>Dow Jones</span><span class="sym">^DJI · dự phòng DIA</span></div>
+<div class="val" data-field="price">51.285,73</div>
+<div class="chg down" data-field="chg">−0,46% <span style="font-weight:500;color:var(--faint)">(đóng cửa 6/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 6/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+</section>
+<p class="fineprint">Cách đọc: khi lấy được giá live, mỗi ô sẽ ghi rõ <b>nguồn</b> và <b>giờ cập nhật</b>. Nếu ghi “ảnh chụp đóng cửa 6/11” thì đó <b>không phải</b> giá live. Bitcoin tự làm mới mỗi 20 giây; chứng khoán Mỹ mỗi 60 giây (ngoài giờ giao dịch Mỹ, giá đứng ở mức đóng cửa gần nhất). Đây là thông tin thị trường, không phải lời khuyên đầu tư.</p>
+
+<div class="grid">
+<section class="card wide featured">
+<h2>Tin đáng chú ý cuối tuần <span class="tag hot">Nổi bật</span></h2>
+<p class="sub">Những diễn biến lớn đang mở, chưa có hồi kết — tổng hợp đến tối 7/11/2026.</p>
+<ul class="news">
+<li><div class="h">Mỹ – Iran: đã có đòn đánh, vẫn đang đối thoại</div><p>Tối 6/11, ông Trump xác nhận Mỹ đánh “nhỏ” vào một hệ thống phòng không Iran ở đảo Qeshm (eo Hormuz). Iran nói đã bắn rơi drone MQ-9 — phía Mỹ chưa xác nhận, chưa có bằng chứng độc lập. Ngày 7/11, ông Trump nói Mỹ đang đối thoại với Iran.</p></li>
+<li><div class="h">Nhân sự Nhà Trắng: Stephen Miller làm Chánh văn phòng từ 9/11</div><p>Ông Trump bổ nhiệm Stephen Miller thay Susie Wiles, người chuyển sang bộ máy chính trị của Trump. Đây là thay đổi nhân sự lớn đầu tiên sau thất bại giữa kỳ của đảng Cộng hòa.</p></li>
+<li><div class="h">Thuế quan: ông Trump dọa mức 300%</div><p>Ngày 5/11, ông Trump nói sẽ giữ thuế quan và dọa áp 50%, 100%, thậm chí 300% với công ty nước ngoài không xây nhà máy ở Mỹ. Đây mới là phát biểu đe dọa — chưa phải mức thuế đã ban hành.</p></li>
+<li><div class="h">Sởi ở Mỹ: hơn 4.800 ca, cao nhất từ 1991</div><p>Các bang báo cáo 8 ca tử vong (CDC xác nhận 4). Ủy ban PAHO họp 10–13/11 để quyết định Mỹ có mất trạng thái loại trừ sởi hay không.</p></li>
+<li><div class="h">Châu Âu: làn sóng đe dọa bom giả vào hàng không</div><p>Ngày 5/11, ít nhất 21 chuyến bay ở 8 nước bị đe dọa bom; ngày 6/11 tiếp diễn ở Pháp, Czechia, Bồ Đào Nha, Đan Mạch. Không nơi nào tìm thấy chất nổ.</p></li>
+<li><div class="h">Spotlight: Trái Đất đang có một “mini-moon”</div><p>Tiểu hành tinh 2026 QQ8 — chỉ khoảng 1 mét — bị trọng lực Trái Đất bắt giữ tạm thời từ cuối tháng 4/2026 và sẽ rời đi vào tháng 12. Đây là mini-moon thứ ba được xác nhận, và là nhỏ nhất.</p></li>
+</ul>
+</section>
+
+<section class="card wide">
+<h2>Berkshire Hathaway công bố kết quả quý 3 — tối 7/11, 20:00 giờ VN</h2>
+<p class="sub">Báo cáo quý đầu tiên dưới thời CEO Greg Abel, nhậm chức từ 1/1/2026 sau khi Warren Buffett rời ghế chủ tịch hồi tháng 9. Cổ phiếu Class B đóng cửa ngày 5/11 ở 572,33 USD.</p>
+<div class="kv"><span class="k">Doanh thu kỳ vọng (Zacks)</span><span class="v">≈ 97,3 tỷ USD (+2,5% YoY)</span></div>
+<div class="kv"><span class="k">EPS kỳ vọng (Zacks)</span><span class="v">≈ 5,91 USD (−5,6% YoY)</span></div>
+<div class="kv"><span class="k">Giá mục tiêu UBS (22/10)</span><span class="v">628 USD — khuyến nghị Mua</span></div>
+<div class="kv"><span class="k">Tiền mặt cuối quý 2</span><span class="v">≈ 364,7 tỷ USD</span></div>
+<p class="small" style="margin-top:10px">Điểm cần xem khi kết quả ra: lợi nhuận mảng bảo hiểm, mảng đường sắt và năng lượng, và cách dùng núi tiền mặt. Các số trên là kỳ vọng trước giờ công bố.</p>
+</section>
+
+<section class="alert wide">
+<h2>🌧️ Sau bão Kalmaegi: mưa vẫn chưa dứt</h2>
+<p>Bão số 13 đổ bộ tối 6/11 vào Gia Lai – Đắk Lắk (tâm vào khu vực Sông Cầu, gió cấp 11, giật cấp 14), rồi suy yếu thành vùng áp thấp trên Hạ Lào sáng sớm 7/11. Hoàn lưu sau bão vẫn gây mưa: <b>từ 7/11 đến hết 8/11, Thanh Hóa đến Bắc Quảng Trị mưa 50–150 mm, cục bộ trên 200 mm</b> — đề phòng lũ quét, sạt lở đất và ngập úng.</p>
+<div class="nums"><div><b>5</b> người chết</div><div><b>6</b> người bị thương</div><div><b>52</b> nhà sập</div><div><b>9</b> tàu chìm</div><div><b>208 mm</b> mưa tại Sơn Hội (Đắk Lắk)</div></div>
+<p class="small">Thiệt hại là số liệu sơ bộ sáng 7/11, vẫn đang được thống kê tiếp; Gia Lai mất điện diện rộng sau bão.</p>
+</section>
+
+<section class="card">
+<h2>Việc làm Mỹ tháng 10 <span class="tag">Đã công bố</span></h2>
+<p class="sub">Nonfarm tốt hơn kỳ vọng rất nhiều.</p>
+<div class="kv"><span class="k">Việc làm mới</span><span class="v up">+165.000 (kỳ vọng ≈ 65.000)</span></div>
+<div class="kv"><span class="k">Tỷ lệ thất nghiệp</span><span class="v">4,1% (kỳ vọng 4,2%)</span></div>
+<div class="kv"><span class="k">Lương giờ trung bình</span><span class="v">+0,4% tháng · +3,1% năm</span></div>
+<div class="kv"><span class="k">Tháng 9 điều chỉnh</span><span class="v">+29.000 → +60.000</span></div>
+<p class="small" style="margin-top:10px">Tin tốt cho người lao động nhưng khiến thị trường lo Fed cứng rắn hơn: xác suất Fed tăng lãi suất tháng 12 tăng lên khoảng 78%, lợi suất trái phiếu 10 năm quanh 4,86%.</p>
+</section>
+
+<section class="card">
+<h2>Crypto &amp; tâm lý thị trường <span class="tag">Sáng 7/11</span></h2>
+<p class="sub">Ngoài giá BTC live ở trên, đây là bức tranh dòng tiền lúc sáng 7/11.</p>
+<div class="kv"><span class="k">ETF BTC giao ngay tại Mỹ, 6/11</span><span class="v down">rút ròng 411,9 tr USD</span></div>
+<div class="kv"><span class="k">ETF BTC, cả tuần</span><span class="v down">rút ròng ≈ 1,28 tỷ USD</span></div>
+<div class="kv"><span class="k">Trung bình 50 tuần của BTC</span><span class="v">≈ 75.560 USD</span></div>
+<div class="meter"><div class="track"><div class="pin" style="left:25%"></div></div><div class="labels"><span>0 · Sợ hãi cực độ</span><span><b style="color:var(--ink)">Fear &amp; Greed: 25</b></span><span>100 · Tham lam cực độ</span></div></div>
+</section>
+
+
+
+<section class="card">
+<h2>Chứng khoán Mỹ — phiên 6/11 <span class="tag">Ảnh chụp</span></h2>
+<p class="sub">Số đóng cửa cố định để đối chiếu với giá live ở trên.</p>
+<div class="kv"><span class="k">Nasdaq</span><span class="v">24.579,42 · <span class="up">+1,09%</span> · tuần −3,37%</span></div>
+<div class="kv"><span class="k">S&amp;P 500</span><span class="v">7.376,86 · <span class="up">+0,31%</span> · tuần −2,68%</span></div>
+<div class="kv"><span class="k">Dow Jones</span><span class="v">51.285,73 · <span class="down">−0,46%</span></span></div>
+<div class="kv"><span class="k">VIX</span><span class="v">25,58</span></div>
+</section>
+
+
+
+<section class="card">
+<h2>Tuần tới nhìn trước</h2>
+<p class="sub">Ba mốc đáng ghim lịch.</p>
+<ul class="ahead">
+<li><span class="when">Tối 7/11</span><div class="what">Berkshire Hathaway công bố KQKD quý 3, khoảng 20:00 giờ VN<span>Đối chiếu kết quả thật với kỳ vọng doanh thu ≈ 97,3 tỷ USD và EPS ≈ 5,91 USD.</span></div></li>
+<li><span class="when">Thứ Hai 9/11</span><div class="what">Stephen Miller nhậm chức Chánh văn phòng Nhà Trắng<span>Thay đổi nhân sự lớn đầu tiên của Nhà Trắng sau bầu cử giữa kỳ.</span></div></li>
+<li><span class="when">Thứ Ba 10/11</span><div class="what">CPI tháng 10 của Mỹ<span>Số liệu lạm phát then chốt sau báo cáo việc làm — mốc thị trường chờ nhất tuần tới. Cũng trong 10–13/11, PAHO họp về trạng thái loại trừ sởi của Mỹ.</span></div></li>
+</ul>
+</section>
+
+
+</div>
+</main>
+<p class="bottom-note">Giá Bitcoin, S&amp;P 500, Nasdaq và Dow Jones tự cập nhật khi có mạng — kèm tổng hợp tin cuối tuần: bão Kalmaegi, việc làm Mỹ, Berkshire Hathaway và các mốc tuần tới.</p>
+<footer>Tổng hợp tin — phần tin tổng hợp đến tối thứ Bảy 7/11/2026 (giờ Việt Nam). Giá live lấy trực tiếp từ Binance (BTC) và Stooq/Yahoo Finance (chỉ số Mỹ, miễn phí nên có thể trễ ~15 phút) ngay trong trình duyệt của người xem.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+try{$("dateline").textContent=new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});}catch(e){}
+function fmt(n,d){return Number(n).toLocaleString("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtPct(p){var s=(p>=0?"+":"−")+fmt(Math.abs(p),2)+"%";return s;}
+function nowStr(){return new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});}
+function fetchT(url,ms){var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||9000);return fetch(url,{signal:c.signal,cache:"no-store"}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error("HTTP "+r.status);return r;}).catch(function(e){clearTimeout(t);throw e;});}
+function fetchJson(url,ms){return fetchT(url,ms).then(function(r){return r.json();});}
+function fetchText(url,ms){return fetchT(url,ms).then(function(r){return r.text();});}
+function proxied(url){return [url,"https://api.allorigins.win/raw?url="+encodeURIComponent(url),"https://corsproxy.io/?url="+encodeURIComponent(url)];}
+function tryUrls(urls,reader){var p=Promise.reject(new Error("start"));urls.forEach(function(u){p=p.catch(function(){return reader(u);});});return p;}
+function setCard(id,priceHtml,chgPct,metaHtml){
+ var card=$(id);if(!card)return;
+ card.querySelector('[data-field="price"]').textContent=priceHtml;
+ var chg=card.querySelector('[data-field="chg"]');
+ if(chgPct===null){chg.textContent="—";chg.className="chg";}
+ else{chg.textContent=fmtPct(chgPct);chg.className="chg "+(chgPct>=0?"up":"down");}
+ card.querySelector('[data-field="meta"]').innerHTML=metaHtml;
+}
+var state={btc:false,idx:0,idxTotal:3};
+function status(){
+ var dot=$("livedot"),txt=$("livestatus");
+ if(state.btc&&state.idx===state.idxTotal){dot.className="dot";txt.textContent="Đang live — giá tự cập nhật";}
+ else if(state.btc||state.idx>0){dot.className="dot";txt.textContent="Live một phần ("+(state.btc?1:0)+"/1 crypto · "+state.idx+"/"+state.idxTotal+" chỉ số Mỹ)";}
+ else{dot.className="dot err";txt.textContent="Chưa lấy được giá live — đang hiện ảnh chụp đóng cửa 6/11";}
+ $("lastupdate").textContent="Lần cập nhật giá: "+nowStr()+" (giờ của bạn)";
+}
+
+function loadBTC(){
+ var urls=["https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDT","https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT","https://api1.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT"];
+ return tryUrls(urls,function(u){return fetchJson(u);}).then(function(d){
+  var price=parseFloat(d.lastPrice),pct=parseFloat(d.priceChangePercent);
+  if(!isFinite(price))throw new Error("bad data");
+  state.btc=true;
+  setCard("card-btc",fmt(price,0)+" USD",pct,
+   "Cao 24h: "+fmt(d.highPrice,0)+" · Thấp 24h: "+fmt(d.lowPrice,0)+" USD<br>Nguồn: Binance (thời gian thực) · Cập nhật: "+nowStr());
+ }).catch(function(){
+  return fetchJson("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true").then(function(d){
+   var b=d.bitcoin;if(!b)throw new Error("bad data");state.btc=true;
+   setCard("card-btc",fmt(b.usd,0)+" USD",b.usd_24h_change,
+    "Nguồn dự phòng: CoinGecko · Cập nhật: "+nowStr());
+  }).catch(function(){state.btc=false;});
+ });
+}
+function parseYahoo(j,label){
+ var r=j&&j.chart&&j.chart.result&&j.chart.result[0];if(!r||!r.meta)throw new Error("bad yahoo");
+ var m=r.meta,price=m.regularMarketPrice,prev=m.chartPreviousClose||m.previousClose;
+ if(!isFinite(price))throw new Error("bad price");
+ var pct=prev?((price-prev)/prev*100):null;
+ var t=m.regularMarketTime?new Date(m.regularMarketTime*1000).toLocaleString("vi-VN"):"—";
+ return {price:price,pct:pct,meta:"Sàn: "+(m.exchangeName||"Mỹ")+" · Giờ dữ liệu: "+t+"<br>Nguồn: Yahoo Finance qua "+label+" (miễn phí, có thể trễ ~15 phút) · Cập nhật: "+nowStr()};
+}
+function loadYahoo(sym,label){
+ var base="https://query2.finance.yahoo.com/v8/finance/chart/"+encodeURIComponent(sym)+"?interval=1m&range=1d";
+ var urls=[base,"https://api.allorigins.win/raw?url="+encodeURIComponent(base),"https://corsproxy.io/?url="+encodeURIComponent(base)];
+ var names=["Yahoo trực tiếp","proxy (AllOrigins)","proxy (corsproxy.io)"];
+ var p=Promise.reject(new Error("start"));
+ urls.forEach(function(u,i){p=p.catch(function(){return fetchJson(u).then(function(j){return parseYahoo(j,names[i]);});});});
+ return p;
+}
+function parseStooq(text,symLabel){
+ var lines=text.trim().split(/\r?\n/);if(lines.length<2)throw new Error("bad csv");
+ var h=lines[0].split(","),row=lines[1].split(",");
+ var o={};h.forEach(function(k,i){o[k.trim()]=row[i];});
+ var close=parseFloat(o.Close),open=parseFloat(o.Open);
+ if(!isFinite(close)||o.Close==="N/D")throw new Error("no data");
+ var pct=isFinite(open)&&open!==0?((close-open)/open*100):null;
+ return {price:close,pct:pct,meta:"Cao ngày: "+o.High+" · Thấp ngày: "+o.Low+" · "+(o.Date||"")+" "+(o.Time||"")+"<br>Nguồn: Stooq ("+symLabel+", % thay đổi tính so với giá mở cửa) · Cập nhật: "+nowStr()};
+}
+function loadStooq(sym){
+ var base="https://stooq.com/q/l/?s="+encodeURIComponent(sym)+"&f=sd2t2ohlcv&h&e=csv";
+ return tryUrls(proxied(base),function(u){return fetchText(u);}).then(function(t){return parseStooq(t,sym);});
+}
+
+function loadIndex(cfg){
+ var attempts=[
+  function(){return loadYahoo(cfg.yahoo,cfg.name);},
+  function(){return loadStooq(cfg.stooq);},
+  function(){return loadYahoo(cfg.etf,cfg.name+" qua ETF "+cfg.etf);},
+  function(){return loadStooq(cfg.etf.toLowerCase()+".us");}
+ ];
+ var p=Promise.reject(new Error("start"));
+ attempts.forEach(function(fn){p=p.catch(fn);});
+ return p.then(function(res){
+  state.idx++;
+  var note=(res.meta.indexOf(cfg.etf)>=0||res.meta.indexOf("ETF")>=0)?" (qua ETF "+cfg.etf+")":"";
+  setCard(cfg.id,fmt(res.price,2),res.pct,res.meta+note);
+ }).catch(function(){/* giữ nguyên ảnh chụp đóng cửa 6/11 đã ghi sẵn trong thẻ */});
+}
+var INDICES=[
+ {id:"card-spx",name:"S&P 500",yahoo:"^GSPC",stooq:"^spx",etf:"SPY"},
+ {id:"card-nasdaq",name:"Nasdaq",yahoo:"^IXIC",stooq:"^ndq",etf:"QQQ"},
+ {id:"card-dow",name:"Dow Jones",yahoo:"^DJI",stooq:"^dji",etf:"DIA"}
+];
+function refreshBTC(){return loadBTC().then(status).catch(status);}
+function refreshIndices(){state.idx=0;return Promise.all(INDICES.map(loadIndex)).then(status).catch(status);}
+function refreshAll(){return Promise.all([refreshBTC(),refreshIndices()]);}
+var BTC_MS=20000,nextAt=Date.now()+BTC_MS;
+$("refreshbtn").addEventListener("click",function(){refreshAll();nextAt=Date.now()+BTC_MS;});
+refreshAll();
+setInterval(function(){refreshBTC();nextAt=Date.now()+BTC_MS;},BTC_MS);
+setInterval(refreshIndices,60000);
+setInterval(function(){
+ var s=Math.max(0,Math.round((nextAt-Date.now())/1000));
+ $("nextupdate").textContent="Tự làm mới sau: "+s+" giây";
+},1000);
+})();
+</script>
+</body>
+</html>
