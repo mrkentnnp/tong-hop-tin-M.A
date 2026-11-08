@@ -18,6 +18,11 @@
 .wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
 .dateline{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,5.4vw,46px);line-height:1.12;margin:8px 0 10px}
+.navmenu{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+.navmenu a{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:var(--soft);background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 22px;transition:all .15s ease}
+.navmenu a:hover{border-color:var(--accent);color:var(--accent)}
+.navmenu a.active{color:#fff;background:linear-gradient(135deg,#b4551f,#d97b2e);border-color:#b4551f;box-shadow:0 4px 14px rgba(180,85,31,.35)}
+.navmenu a.teal.active{background:linear-gradient(135deg,#14635d,#2a8a7f);border-color:#14635d;box-shadow:0 4px 14px rgba(20,99,93,.35)}
 .bottom-note{color:var(--faint);font-size:13.5px;line-height:1.55;max-width:72ch;margin:22px auto 0;text-align:center;border-top:1px solid var(--line);padding-top:16px}
 .livebar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13.5px}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--up);display:inline-block;margin-right:6px;animation:pulse 1.6s infinite}
@@ -60,6 +65,10 @@ footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
 <header>
 <div class="dateline" id="dateline">Chủ Nhật 8/11/2026</div>
 <h1>Tổng hợp tin</h1>
+<nav class="navmenu" aria-label="Chuyên mục">
+<a href="/" class="active">Tổng hợp</a>
+<a href="/thoi-su.html" class="teal">Thời sự</a>
+</nav>
 <div class="livebar" role="status">
 <span><span class="dot wait" id="livedot"></span><b id="livestatus">Đang kết nối lấy giá…</b></span>
 <span id="lastupdate">Lần cập nhật giá: —</span>

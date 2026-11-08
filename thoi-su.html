@@ -1,0 +1,83 @@
+<!doctype html>
+<!--
+  THỜI SỰ — trang tin xã hội TP.HCM mỗi ngày, sau đó là tin nóng cả nước.
+  Thuộc trang "Tổng hợp tin" (tinngay.pages.dev), file trên GitHub: thoi-su.html
+-->
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Thời sự — Tổng hợp tin</title>
+<style>
+:root{--bg:#f6f3ec;--surface:#fffdf8;--surface2:#efe9db;--ink:#1d2733;--soft:#4c5a68;--faint:#7c8a97;--line:#ddd5c3;--accent:#b4551f;--accent-soft:#f7e3d3;--teal:#14635d;--teal-soft:#dcebe7;--up:#177245;--down:#b3372e;--radius:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#131a21;--surface:#1c262f;--surface2:#232f3a;--ink:#eef2f4;--soft:#b3c0ca;--faint:#8696a2;--line:#33424e;--accent:#e08a4c;--accent-soft:#3a2a1c;--teal:#4db3a8;--teal-soft:#1e3533;--up:#4cc984;--down:#e87a70}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
+.dateline{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,5.4vw,46px);line-height:1.12;margin:8px 0 10px}
+.navmenu{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+.navmenu a{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:var(--soft);background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 22px;transition:all .15s ease}
+.navmenu a:hover{border-color:var(--accent);color:var(--accent)}
+.navmenu a.active{color:#fff;background:linear-gradient(135deg,#b4551f,#d97b2e);border-color:#b4551f;box-shadow:0 4px 14px rgba(180,85,31,.35)}
+.navmenu a.teal.active{background:linear-gradient(135deg,#14635d,#2a8a7f);border-color:#14635d;box-shadow:0 4px 14px rgba(20,99,93,.35)}
+.lead{color:var(--soft);font-size:15.5px;max-width:72ch;margin:10px 0 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}.grid .wide{grid-column:1/-1}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.card.featured{border:2px solid var(--teal);box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.card h2{font-family:Georgia,serif;font-size:21px;margin:0 0 4px;font-weight:600}
+.card h2 .tag{font-family:system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--teal-soft);color:var(--teal);white-space:nowrap;vertical-align:middle}
+.card h2 .tag.hot{background:var(--accent-soft);color:var(--accent)}
+.card .sub{color:var(--faint);font-size:13.5px;margin:0 0 14px}.card p{margin:0 0 10px}.card p:last-child{margin-bottom:0}
+.small{font-size:14px;color:var(--soft)}
+.news{list-style:none;margin:0;padding:0}.news li{padding:12px 0;border-bottom:1px solid var(--line)}.news li:first-child{padding-top:2px}.news li:last-child{border-bottom:none;padding-bottom:0}.news .h{font-weight:700;font-size:15.5px;margin-bottom:2px}.news p{margin:0;font-size:14.5px;color:var(--soft)}
+.bottom-note{color:var(--faint);font-size:13.5px;line-height:1.55;max-width:72ch;margin:22px auto 0;text-align:center;border-top:1px solid var(--line);padding-top:16px}
+footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="dateline">Chủ Nhật 8/11/2026</div>
+<h1>Thời sự</h1>
+<nav class="navmenu" aria-label="Chuyên mục">
+<a href="/">Tổng hợp</a>
+<a href="/thoi-su.html" class="teal active">Thời sự</a>
+</nav>
+<p class="lead">Tin xã hội TP.HCM mỗi ngày, sau đó là những tin nóng của cả nước. Trang này cập nhật mỗi sáng cùng bản Tổng hợp.</p>
+</header>
+
+<main>
+<div class="grid">
+<section class="card wide featured">
+<h2>TP.HCM hôm nay <span class="tag">Sài Gòn</span></h2>
+<p class="sub">Tin xã hội trong thành phố, tổng hợp đến sáng 8/11/2026.</p>
+<ul class="news">
+<li><div class="h">6.000 người đi bộ hưởng ứng Ngày Pháp luật Việt Nam</div><p>Chương trình bắt đầu 6h30 sáng nay 8/11 tại đường Lê Duẩn, trước Hội trường Thống Nhất, lộ trình khoảng 1,5 km qua Công xã Paris – Đồng Khởi – Lê Lợi – Nguyễn Huệ – Lê Thánh Tôn – Pasteur, kết thúc 9h30. Để phục vụ chương trình, từ 5h sáng nay cấm xe trên đường Lê Duẩn (Nam Kỳ Khởi Nghĩa – Phạm Ngọc Thạch) và Pasteur (Hàn Thuyên – Alexandre de Rhodes).</p></li>
+<li><div class="h">Mưa tăng, đề phòng ngập do triều cường</div><p>Chủ nhật mưa tăng, nguy cơ ngập ở các vùng trũng khi triều cường lên. Người dân đi lại buổi tối nên chú ý các đoạn đường thấp, trũng.</p></li>
+<li><div class="h">Sài Gòn Safari: Thanh tra Chính phủ công bố nhiều sai phạm</div><p>Kết luận thanh tra toàn diện dự án Sài Gòn Safari (485,35 ha, xã An Nhơn Tây và Phú Mỹ Hưng, Củ Chi) chỉ ra nhiều sai phạm. Dự án có chủ trương từ năm 1996, cấp phép từ 2004, chủ đầu tư là Công ty TNHH-MTV Thảo Cầm Viên. Có 171 hộ dân bị ảnh hưởng và đang khiếu nại.</p></li>
+<li><div class="h">Metro Bến Thành – Cần Giờ: Thành ủy ra “tối hậu thư” về mặt bằng</div><p>Lãnh đạo Thành ủy yêu cầu các địa phương hoàn tất bồi thường, giải phóng mặt bằng cho dự án metro Bến Thành – Cần Giờ và cầu Cần Giờ. Xã Bình Khánh phải hoàn tất xác minh 51 trường hợp còn lại; xã An Thới Đông tập trung xử lý hồ sơ tồn đọng để bàn giao toàn bộ mặt bằng.</p></li>
+<li><div class="h">Phường Tân Uyên đưa pháp luật về từng khu phố</div><p>Hưởng ứng Ngày Pháp luật Việt Nam 9/11, phường Tân Uyên tổ chức lễ phát động, ra mắt đội tuyên truyền viên pháp luật, tập huấn viên hòa giải và 15 tổ hòa giải ở cơ sở.</p></li>
+</ul>
+</section>
+
+<section class="card wide">
+<h2>Tin nóng cả nước <span class="tag hot">Cả nước</span></h2>
+<p class="sub">Những tin đáng chú ý ngoài TP.HCM, sáng 8/11/2026.</p>
+<ul class="news">
+<li><div class="h">Tổng Bí thư, Chủ tịch nước Tô Lâm thăm chính thức Nhật Bản</div><p>Sáng nay 8/11, Tổng Bí thư, Chủ tịch nước Tô Lâm cùng phu nhân Ngô Phương Ly rời Hà Nội, thăm chính thức Nhật Bản từ 8–11/11. Dự kiến hội kiến Nhà vua, hội đàm với Thủ tướng Nhật Bản, phát biểu chính sách tại Quốc hội Nhật Bản và thăm tỉnh Kanagawa. Đây là chuyến thăm Nhật Bản đầu tiên của ông Tô Lâm trên cương vị mới.</p></li>
+<li><div class="h">Điều chỉnh địa giới Hà Nội – Phú Thọ</div><p>Chính phủ thông qua đề án điều chỉnh địa giới hành chính giữa Hà Nội và Phú Thọ: điều chỉnh 4.006,38 ha từ Phú Thọ về Hà Nội, trong đó có 2.529,38 ha thuộc Vườn quốc gia Ba Vì.</p></li>
+<li><div class="h">Hơn 366.000 tỷ đồng hỗ trợ thuế, phí, tiền thuê đất trong 10 tháng</div><p>Bộ Tài chính cho biết tổng số tiền thuế, phí và tiền thuê đất được miễn, giảm, gia hạn để hỗ trợ người dân và doanh nghiệp trong 10 tháng đầu năm đạt khoảng 366.600 tỷ đồng.</p></li>
+<li><div class="h">Sau bão Kalmaegi: 6 người chết, thiệt hại khoảng 7,85 nghìn tỷ đồng</div><p>Bão số 13 đổ bộ tối 6/11 vào Gia Lai – Đắk Lắk, làm 6 người chết, 2.413 nhà sập hoàn toàn, 58.824 nhà hư hại. Mưa sau bão vẫn tiếp diễn ở Thanh Hóa đến Bắc Quảng Trị trong ngày 7–8/11.</p></li>
+<li><div class="h">Tuần lễ nông sản vùng miền – Bình Đông 2026</div><p>Từ 13 đến 18/11, tuần lễ nông sản vùng miền diễn ra tại tuyến đường số 1 và số 6, khu dân cư Pegasuite, phường Bình Đông, TP.HCM.</p></li>
+</ul>
+</section>
+</div>
+</main>
+<p class="bottom-note">Trang Thời sự — tin xã hội TP.HCM mỗi ngày, sau đó là tin nóng cả nước. Nội dung tổng hợp đến sáng Chủ Nhật 8/11/2026 (giờ Việt Nam).</p>
+<footer>Thời sự — một chuyên mục của “Tổng hợp tin” (tinngay.pages.dev).</footer>
+</div>
+</body>
+</html>
