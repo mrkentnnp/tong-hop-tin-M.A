@@ -63,12 +63,13 @@ footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
 .pager button{font:inherit;font-size:14px;font-weight:700;padding:7px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
 .pager button:disabled{opacity:.4;cursor:default}
 .pager span{font-size:14px;color:var(--faint)}
+.dateline a{color:inherit;text-decoration:none}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-<div class="dateline" id="dateline">Thứ Tư 11/11/2026</div>
+<div class="dateline" id="dateline"><a href="/" id="dateline-link">Thứ Tư 11/11/2026</a></div>
 <h1>Tổng hợp tin</h1>
 <nav class="navmenu" aria-label="Chuyên mục">
 <a href="/" class="active">Tổng hợp</a>
@@ -230,7 +231,7 @@ footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
 (function(){
 "use strict";
 var $=function(id){return document.getElementById(id)};
-try{$("dateline").textContent=new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});}catch(e){}
+try{var dl=$("dateline-link");if(dl)dl.textContent=new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});}catch(e){}
 function fmt(n,d){return Number(n).toLocaleString("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d});}
 function fmtPct(p){var s=(p>=0?"+":"−")+fmt(Math.abs(p),2)+"%";return s;}
 function nowStr(){return new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});}

@@ -58,12 +58,13 @@ section.card{background:var(--surface);border:1px solid var(--line);border-radiu
 .ahead{list-style:none;margin:0;padding:0}.ahead li{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line)}.ahead li:last-child{border-bottom:none}.ahead .when{flex:0 0 86px;font-weight:800;font-size:13.5px;color:var(--accent);padding-top:2px}.ahead .what{font-size:15px}.ahead .what span{display:block;color:var(--soft);font-size:14px}
 .meter{margin-top:14px}.meter .track{height:10px;border-radius:999px;background:linear-gradient(90deg,#b3372e,#d98a2b 45%,#4d9e57);position:relative}.meter .pin{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translate(-50%,-50%)}.meter .labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:6px}
 footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
+.dateline a{color:inherit;text-decoration:none}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-<div class="dateline" id="dateline">Thứ Ba 10/11/2026</div>
+<div class="dateline" id="dateline"><a href="/" id="dateline-link">Thứ Ba 10/11/2026</a></div>
 <h1>Tổng hợp tin</h1>
 <nav class="navmenu" aria-label="Chuyên mục">
 <a href="/" class="active">Tổng hợp</a>
@@ -220,7 +221,7 @@ footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
 (function(){
 "use strict";
 var $=function(id){return document.getElementById(id)};
-try{$("dateline").textContent=new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});}catch(e){}
+try{var dl=$("dateline-link");if(dl)dl.textContent=new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});}catch(e){}
 function fmt(n,d){return Number(n).toLocaleString("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d});}
 function fmtPct(p){var s=(p>=0?"+":"−")+fmt(Math.abs(p),2)+"%";return s;}
 function nowStr(){return new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});}
