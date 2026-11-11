@@ -1,0 +1,330 @@
+<!doctype html>
+<!--
+  TỔNG HỢP TIN — BẢN LIVE (1 file duy nhất, tên trên GitHub: index.html)
+  Giá live cần có mạng khi mở trang: BTC lấy từ Binance, chỉ số Mỹ lấy từ Stooq/Yahoo (miễn phí, có thể trễ ~15 phút).
+  Mở offline vẫn đọc được phần tin và giá ảnh chụp đóng cửa phiên 9/11/2026.
+-->
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Tổng hợp tin</title>
+<style>
+:root{--bg:#f6f3ec;--surface:#fffdf8;--surface2:#efe9db;--ink:#1d2733;--soft:#4c5a68;--faint:#7c8a97;--line:#ddd5c3;--accent:#b4551f;--accent-soft:#f7e3d3;--teal:#14635d;--teal-soft:#dcebe7;--up:#177245;--down:#b3372e;--warn-bg:#fdf0dc;--warn-line:#e3b96a;--warn-ink:#6d4a08;--radius:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#131a21;--surface:#1c262f;--surface2:#232f3a;--ink:#eef2f4;--soft:#b3c0ca;--faint:#8696a2;--line:#33424e;--accent:#e08a4c;--accent-soft:#3a2a1c;--teal:#4db3a8;--teal-soft:#1e3533;--up:#4cc984;--down:#e87a70;--warn-bg:#35290f;--warn-line:#8a6a25;--warn-ink:#f0cd82}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
+.dateline{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,5.4vw,46px);line-height:1.12;margin:8px 0 10px}
+.navmenu{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+.navmenu a{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:var(--soft);background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 22px;transition:all .15s ease}
+.navmenu a:hover{border-color:var(--accent);color:var(--accent)}
+.navmenu a.active{color:#fff;background:linear-gradient(135deg,#b4551f,#d97b2e);border-color:#b4551f;box-shadow:0 4px 14px rgba(180,85,31,.35)}
+.navmenu a.teal.active{background:linear-gradient(135deg,#14635d,#2a8a7f);border-color:#14635d;box-shadow:0 4px 14px rgba(20,99,93,.35)}
+.bottom-note{color:var(--faint);font-size:13.5px;line-height:1.55;max-width:72ch;margin:22px auto 0;text-align:center;border-top:1px solid var(--line);padding-top:16px}
+.livebar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13.5px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--up);display:inline-block;margin-right:6px;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+.dot.err{background:var(--down);animation:none}.dot.wait{background:#d98a2b;animation:none}
+button.refresh{margin-left:auto;border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer;font-size:13.5px}
+button.refresh:active{transform:scale(.97)}
+.prices{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+@media(max-width:860px){.prices{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.prices{grid-template-columns:1fr}}
+.price{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.price .name{font-size:13px;font-weight:700;color:var(--soft);display:flex;justify-content:space-between;gap:8px}
+.price .sym{color:var(--faint);font-weight:600;font-size:12px}
+.price .val{font-size:clamp(24px,3.4vw,30px);font-weight:800;font-variant-numeric:tabular-nums;margin-top:4px}
+.price .chg{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.price .meta{font-size:12.5px;color:var(--faint);margin-top:8px;line-height:1.5}
+.up{color:var(--up)}.down{color:var(--down)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.grid .wide{grid-column:1/-1}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.card.featured{border:2px solid var(--accent);box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.card.featured h2{font-size:26px}
+.card.featured .news .h{font-size:16.5px}
+.card.featured .news li{padding:14px 0}
+.card h2{font-family:Georgia,serif;font-size:21px;margin:0 0 4px;font-weight:600}
+.card h2 .tag{font-family:system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--teal-soft);color:var(--teal);white-space:nowrap;vertical-align:middle}
+.card h2 .tag.hot{background:var(--accent-soft);color:var(--accent)}
+.card .sub{color:var(--faint);font-size:13.5px;margin:0 0 14px}.card p{margin:0 0 10px}.card p:last-child{margin-bottom:0}
+.small{font-size:14px;color:var(--soft)}.fineprint{font-size:12.5px;color:var(--faint);margin-top:12px}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14.5px}.kv:last-child{border-bottom:none}.kv .k{color:var(--soft)}.kv .v{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.alert{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--radius);padding:20px 22px}.alert h2{font-family:Georgia,serif;font-size:21px;margin:0 0 6px;color:var(--warn-ink)}.alert p{margin:0 0 10px}.alert .nums{display:flex;flex-wrap:wrap;gap:8px 22px;margin:12px 0;font-size:14px}.alert .nums b{font-size:19px}
+.news{list-style:none;margin:0;padding:0}.news li{padding:12px 0;border-bottom:1px solid var(--line)}.news li:first-child{padding-top:2px}.news li:last-child{border-bottom:none;padding-bottom:0}.news .h{font-weight:700;font-size:15.5px;margin-bottom:2px}.news p{margin:0;font-size:14.5px;color:var(--soft)}
+.ahead{list-style:none;margin:0;padding:0}.ahead li{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line)}.ahead li:last-child{border-bottom:none}.ahead .when{flex:0 0 86px;font-weight:800;font-size:13.5px;color:var(--accent);padding-top:2px}.ahead .what{font-size:15px}.ahead .what span{display:block;color:var(--soft);font-size:14px}
+.meter{margin-top:14px}.meter .track{height:10px;border-radius:999px;background:linear-gradient(90deg,#b3372e,#d98a2b 45%,#4d9e57);position:relative}.meter .pin{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translate(-50%,-50%)}.meter .labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:6px}
+footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="dateline" id="dateline">Thứ Ba 10/11/2026</div>
+<h1>Tổng hợp tin</h1>
+<nav class="navmenu" aria-label="Chuyên mục">
+<a href="/" class="active">Tổng hợp</a>
+<a href="/thoi-su.html" class="teal">Thời sự</a>
+</nav>
+<div class="livebar" role="status">
+<span><span class="dot wait" id="livedot"></span><b id="livestatus">Đang kết nối lấy giá…</b></span>
+<span id="lastupdate">Lần cập nhật giá: —</span>
+<span id="nextupdate"></span>
+<button class="refresh" id="refreshbtn" type="button">↻ Cập nhật ngay</button>
+</div>
+</header>
+
+<main>
+<section class="prices" aria-label="Giá trực tiếp">
+<article class="price" id="card-btc">
+<div class="name"><span>Bitcoin</span><span class="sym">BTC / USDT · Binance</span></div>
+<div class="val" data-field="price">≈ 74.240 USD</div>
+<div class="chg" data-field="chg">—</div>
+<div class="meta" data-field="meta">Ảnh chụp tối 10/11: quanh 74.240 USD — vẫn dưới giá mua trung bình của Strategy (~75.450 USD).<br>Đang chờ giá live…</div>
+</article>
+<article class="price" id="card-spx">
+<div class="name"><span>S&amp;P 500</span><span class="sym">^SPX · dự phòng SPY</span></div>
+<div class="val" data-field="price">7.549,94</div>
+<div class="chg up" data-field="chg">+2,35% <span style="font-weight:500;color:var(--faint)">(đóng cửa 9/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 9/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+<article class="price" id="card-nasdaq">
+<div class="name"><span>Nasdaq</span><span class="sym">^IXIC · dự phòng QQQ</span></div>
+<div class="val" data-field="price">25.253,14</div>
+<div class="chg up" data-field="chg">+2,74% <span style="font-weight:500;color:var(--faint)">(đóng cửa 9/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 9/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+<article class="price" id="card-dow">
+<div class="name"><span>Dow Jones</span><span class="sym">^DJI · dự phòng DIA</span></div>
+<div class="val" data-field="price">52.389,75</div>
+<div class="chg up" data-field="chg">+2,15% <span style="font-weight:500;color:var(--faint)">(đóng cửa 9/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 9/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+</section>
+<p class="fineprint">Cách đọc: khi lấy được giá live, mỗi ô sẽ ghi rõ <b>nguồn</b> và <b>giờ cập nhật</b>. Nếu ghi “ảnh chụp đóng cửa 9/11” thì đó <b>không phải</b> giá live. Bitcoin tự làm mới mỗi 20 giây; chứng khoán Mỹ mỗi 60 giây (ngoài giờ giao dịch Mỹ, giá đứng ở mức đóng cửa gần nhất). Đây là thông tin thị trường, không phải lời khuyên đầu tư.</p>
+
+<div class="grid">
+<section class="card wide featured">
+<h2>Tin đáng chú ý tối 10/11 <span class="tag hot">Nổi bật</span></h2>
+<p class="sub">Những diễn biến lớn đang mở, chưa có hồi kết — tổng hợp đến tối 10/11/2026.</p>
+<ul class="news">
+<li><div class="h">CPI tháng 10 tối nay 20:30: kỳ vọng +0,3%, lõi +0,2% — và một điểm lạ</div><p>BLS công bố lúc 8:30 giờ ET (20:30 giờ VN). Kỳ vọng chung: +0,3% theo tháng (tháng 9: +0,6%), lõi +0,2% (tháng 9: +0,3%). Lần này BLS sẽ KHÔNG công bố số liệu tăng theo năm — do đợt shutdown tháng 10/2025 không thu thập được giá nên không có mốc so sánh; số năm gần nhất vẫn là tháng 9: 3,7% (lõi 2,6%). Thống đốc Fed Christopher Waller nói sẽ ủng hộ tăng lãi suất tháng 12 ngay cả khi lạm phát hạ nhiệt, và cân nhắc tăng 0,5 điểm nếu lõi từ 0,3% trở lên. Thị trường đang đặt cược ~85% khả năng Fed tăng lãi suất tháng 12, có nguồn nói đã định giá gần như chắc chắn.</p></li>
+<li><div class="h">Luận tội Hegseth: Massie đã trình 8 điều khoản, bỏ phiếu dự kiến thứ Tư 11/11</div><p>Dân biểu Cộng hòa Thomas Massie trình nghị quyết luận tội Bộ trưởng Quốc phòng Pete Hegseth hôm thứ Hai 9/11, với 8 điều khoản — trong đó có việc phát động chiến tranh với Iran mà không có phê chuẩn của Quốc hội, cùng các cáo buộc lạm quyền khác. Theo thủ tục đặc quyền, Hạ viện có 2 ngày làm việc để xếp lịch, nên bỏ phiếu dự kiến thứ Tư 11/11. Một số nguồn Quốc hội nói nghị quyết có thể đủ phiếu thông qua ngay cả khi Cộng hòa vẫn kiểm soát Hạ viện tới 3/1/2027; nhưng để bãi nhiệm vẫn cần 2/3 Thượng viện, nơi Cộng hòa giữ 53/100 ghế, nên khả năng kết tội được đánh giá là thấp. Ông Trump đã lên tiếng bảo vệ Hegseth.</p></li>
+<li><div class="h">Chứng khoán Mỹ bật mạnh nhất từ tháng 4, dầu rơi gần 6% — Bitcoin đứng ngoài</div><p>Phiên thứ Hai 9/11: S&amp;P 500 +2,35% lên 7.549,94, Nasdaq +2,74% lên 25.253,14, Dow +2,15% lên 52.389,75 — phiên tốt nhất kể từ tháng 4, hồi lại phần lớn đợt bán tháo cổ phiếu AI tuần trước. VIX rơi về 19,92. Dầu Brent giảm ~5,8% sau tín hiệu hy vọng ngoại giao Mỹ – Iran. Bitcoin thì không theo kịp: đứng quanh 74.800 USD lúc đóng cửa phiên Mỹ, rồi trượt về ~74.200 USD tối nay, vẫn dưới 75.000 USD. ETF Bitcoin giao ngay rút ròng 201 triệu USD hôm thứ Hai, nâng tổng rút ròng từ 2/11 lên khoảng 1,5 tỷ USD; công ty đào MARA tiết lộ đã bán 13.597 BTC (~1,1 tỷ USD) trong 6 tuần qua.</p></li>
+<li><div class="h">Siêu bão Fung-Wong đã vào Biển Đông sáng nay, thành bão số 14 — không đổ bộ Việt Nam</div><p>Sau khi quét qua Philippines với gió tới 230 km/h, làm ít nhất 2 người chết và hơn 1 triệu người phải sơ tán, Fung-Wong đã rời đảo Luzon sáng 10/11 và vào vùng biển phía Đông Bắc Biển Đông, thành bão số 14. Dự báo bão đi theo hướng Tây Tây Bắc rồi chuyển Bắc, Bắc Đông Bắc, ra khỏi Biển Đông chiều 12/11, hướng về Đài Loan / Đông Nam Trung Quốc — không ảnh hưởng trực tiếp đến đất liền Việt Nam, nhưng biển Đông sóng cao 3–5 m, biển động mạnh.</p></li>
+<li><div class="h">VN-Index bật +28,75 điểm lên 1.743,07 — cao nhất phiên, cao nhất nửa tháng</div><p>Phiên 10/11: VN-Index tăng 28,75 điểm (+1,68%), đóng cửa tại mức cao nhất phiên 1.743,07 điểm, với 221 mã tăng / 94 mã giảm; thanh khoản HOSE 16.901 tỷ đồng, khối ngoại mua ròng ~467 tỷ đồng. Dòng tiền lan tỏa, nổi bật bất động sản, ngân hàng, chứng khoán. Thị trường đón tin Ngân hàng Nhà nước sẽ mua ngoại tệ giao ngay vào thứ Hai và thứ Tư hằng tuần, bắt đầu từ 11/11.</p></li>
+<li><div class="h">Việt Nam lần đầu công bố Báo cáo An ninh năng lượng</div><p>Ngày 10/11 tại Hà Nội, Bộ Công Thương tổ chức Diễn đàn An ninh năng lượng quốc gia và lần đầu công bố Báo cáo An ninh năng lượng Việt Nam 2026. Trong 177 quốc gia được khảo sát, 102 gặp khó khăn về năng lượng, chỉ 13 duy trì trạng thái ổn định, trong đó có Việt Nam. Sản lượng điện sản xuất và nhập khẩu năm 2026 ước đạt 356,2 tỷ kWh, tăng 10,3% so với năm 2025.</p></li>
+<li><div class="h">Tổng Bí thư Tô Lâm ở Nhật Bản: gặp các cựu Thủ tướng, diễn thuyết trước Quốc hội hôm qua</div><p>Trong chuyến thăm chính thức Nhật Bản (8–11/11), sáng nay 10/11 Tổng Bí thư, Chủ tịch nước Tô Lâm gặp các cựu Thủ tướng Ishiba, Kishida và Aso, cùng lãnh đạo Liên minh nghị sĩ hữu nghị Nhật – Việt. Hôm qua 9/11 ông đã hội đàm Thủ tướng Takaichi Sanae và diễn thuyết trước Quốc hội Nhật Bản. Cũng hôm nay, cựu Thủ tướng Phạm Minh Chính được Nhật hoàng trao Huân chương Mặt trời mọc hạng Nhất.</p></li>
+<li><div class="h">Spotlight: PAHO họp từ hôm nay 10–13/11 về trạng thái loại trừ sởi của Mỹ</div><p>Ủy ban PAHO họp 10–13/11 để quyết định Mỹ có mất trạng thái loại trừ sởi hay không, sau khi CDC ghi nhận hơn 4.800 ca sởi trong năm nay — cao nhất từ 1991.</p></li>
+</ul>
+</section>
+
+<section class="card wide">
+<h2>CPI tháng 10 tối nay: bài kiểm tra lớn nhất của tuần</h2>
+<p class="sub">Công bố thứ Ba 10/11 lúc 8:30 giờ ET (20:30 giờ VN) — số liệu lạm phát cuối cùng Fed có trước quyết định lãi suất ngày 8–9/12.</p>
+<div class="kv"><span class="k">Kỳ vọng chung</span><span class="v">+0,3% theo tháng · lõi +0,2%</span></div>
+<div class="kv"><span class="k">FactSet / Cleveland Fed nowcast</span><span class="v">+0,24% · lõi +0,21%</span></div>
+<div class="kv"><span class="k">Điểm lạ: không có số liệu năm</span><span class="v">BLS không thu thập giá tháng 10/2025 do shutdown nên không công bố mức tăng 12 tháng; số năm gần nhất vẫn là tháng 9: 3,7% (lõi 2,6%)</span></div>
+<div class="kv"><span class="k">Ngưỡng của Waller</span><span class="v">lõi từ +0,3% trở lên thì cân nhắc tăng 0,5 điểm tháng 12; dưới ngưỡng đó vẫn ủng hộ tăng 0,25 điểm</span></div>
+<div class="kv"><span class="k">Fed tháng 12</span><span class="v">thị trường đặt cược ~85% khả năng tăng lãi suất (Reuters), sau báo cáo việc làm tháng 10 mạnh (+165.000 việc làm)</span></div>
+<div class="kv"><span class="k">PPI tháng 10</span><span class="v">thứ Sáu 13/11 · kỳ vọng +0,4% theo tháng</span></div>
+<p class="small" style="margin-top:10px">Cần lưu ý: vì BLS làm tròn đến 0,1%, lõi chỉ cần đạt 0,25% trở lên sẽ in thành 0,3% — và thị trường sẽ đọc đó là lạm phát chưa hạ nhiệt. CPI tháng 11 công bố ngày 10/12, tức sau quyết định của Fed một ngày, nên số liệu tối nay càng quan trọng. Chỉ số PCE lõi tháng 10 — thước đo lạm phát Fed ưa dùng — công bố ngày 25/11.</p>
+</section>
+
+<section class="alert wide">
+<h2>🌀 Bão số 14 Fung-Wong đã vào Biển Đông — không đổ bộ Việt Nam, nhưng biển động mạnh</h2>
+<p>Siêu bão Fung-Wong đổ bộ tỉnh Aurora (Luzon, Philippines) tối 9/11 với gió 185 km/h, giật 230 km/h, rồi suy yếu dần và rời đảo Luzon sáng 10/11, vào vùng biển phía Đông Bắc Biển Đông, thành bão số 14.</p>
+<div class="nums"><div><b>2</b> người chết tại Philippines</div><div><b>&gt;1 triệu</b> người sơ tán</div><div><b>230 km/h</b> gió giật lúc mạnh nhất</div><div><b>3–5 m</b> sóng ở Bắc và giữa Biển Đông hôm nay</div></div>
+<p class="small">Dự báo bão đi theo hướng Tây Tây Bắc rồi chuyển Bắc, Bắc Đông Bắc, ra khỏi Biển Đông chiều 12/11, hướng về Đài Loan / Đông Nam Trung Quốc. Không đổ bộ Việt Nam, nhưng các tỉnh ven biển từ Quảng Ninh đến Gia Lai đã được yêu cầu sẵn sàng ứng phó. Đây là cơn bão thứ 14 trên Biển Đông trong năm 2026; bão số 13 Kalmaegi tuần trước làm 5 người chết tại Việt Nam (số liệu đến 8h ngày 8/11) và gần 200 người chết tại Philippines.</p>
+</section>
+
+<section class="card">
+<h2>Việc làm Mỹ tháng 10 <span class="tag">Đã công bố</span></h2>
+<p class="sub">Nonfarm tốt hơn kỳ vọng rất nhiều.</p>
+<div class="kv"><span class="k">Việc làm mới</span><span class="v up">+165.000 (kỳ vọng ≈ 65.000)</span></div>
+<div class="kv"><span class="k">Tỷ lệ thất nghiệp</span><span class="v">4,1% (kỳ vọng 4,2%)</span></div>
+<div class="kv"><span class="k">Lương giờ trung bình</span><span class="v">+0,4% tháng · +3,1% năm</span></div>
+<div class="kv"><span class="k">Tháng 9 điều chỉnh</span><span class="v">+29.000 → +60.000</span></div>
+<p class="small" style="margin-top:10px">Tin tốt cho người lao động nhưng khiến thị trường lo Fed cứng rắn hơn: xác suất Fed tăng lãi suất tháng 12 khoảng 77–80% (CME FedWatch), lợi suất trái phiếu 10 năm quanh 4,86%. CPI tháng 10 công bố thứ Ba 10/11 sẽ là bài kiểm tra tiếp theo.</p>
+</section>
+
+<section class="card">
+<h2>Crypto &amp; tâm lý thị trường <span class="tag">Tối 10/11</span></h2>
+<p class="sub">Ngoài giá BTC live ở trên, đây là bức tranh dòng tiền lúc tối 10/11.</p>
+<div class="kv"><span class="k">BTC tối 10/11</span><span class="v down">quanh 74.240 USD · thấp nhất trong ngày ~74.100 USD</span></div>
+<div class="kv"><span class="k">Đã thủng giá mua trung bình của Strategy</span><span class="v">~75.450 USD — Strategy đang nắm 849.327 BTC</span></div>
+<div class="kv"><span class="k">Biên độ ngày 9/11</span><span class="v">thấp 73.750 USD · cao 75.599 USD</span></div>
+<div class="kv"><span class="k">ETH</span><span class="v down">≈ 2.120 USD · đứng yên trong khi chứng khoán Mỹ bật mạnh</span></div>
+<div class="kv"><span class="k">ETF BTC, thứ Hai 9/11</span><span class="v down">rút ròng 201 triệu USD · tổng rút từ 2/11 ≈ 1,5 tỷ USD</span></div>
+<p class="small" style="margin-top:10px">BTC đã đóng cửa tuần dưới 75.000 USD, ngay trên đường trung bình 200 ngày; thủng 73.000 USD có thể mở đường về 60.000 USD, vượt 80.000–87.000 USD mới xác nhận đảo chiều. Công ty đào MARA tiết lộ đã bán 13.597 BTC (~1,1 tỷ USD) trong 6 tuần qua — một phần lý do dòng tiền ETF vẫn rút dù chứng khoán Mỹ hồi mạnh.</p>
+</section>
+
+
+
+<section class="card">
+<h2>Chứng khoán Mỹ — phiên 9/11 <span class="tag">Ảnh chụp</span></h2>
+<p class="sub">Số đóng cửa phiên 9/11 (thứ Hai) để đối chiếu với giá live ở trên.</p>
+<div class="kv"><span class="k">Nasdaq</span><span class="v">25.253,14 · <span class="up">+2,74%</span> · Nasdaq 100 +3,4%, chỉ số chip +~7%</span></div>
+<div class="kv"><span class="k">S&amp;P 500</span><span class="v">7.549,94 · <span class="up">+2,35%</span> · phiên tốt nhất kể từ 8/4</span></div>
+<div class="kv"><span class="k">Dow Jones</span><span class="v">52.389,75 · <span class="up">+2,15%</span></span></div>
+<div class="kv"><span class="k">VIX</span><span class="v">19,92</span></div>
+<div class="kv"><span class="k">Vàng</span><span class="v">≈ 4.122 USD/oz · <span class="down">−0,45%</span></span></div>
+<div class="kv"><span class="k">Dầu Brent / WTI</span><span class="v">≈ 91,5 / 85,8 USD · <span class="down">Brent −5,8% phiên 9/11 sau tín hiệu hy vọng ngoại giao Mỹ – Iran</span></span></div>
+</section>
+
+
+
+
+<section class="card">
+<h2>Chứng khoán Việt Nam — phiên 10/11 <span class="tag">VN-Index</span></h2>
+<p class="sub">Bật mạnh sau phiên điều chỉnh, đóng cửa cao nhất phiên.</p>
+<div class="kv"><span class="k">VN-Index</span><span class="v">1.743,07 · <span class="up">+28,75 điểm (+1,68%)</span></span></div>
+<div class="kv"><span class="k">VN30</span><span class="v">1.860,93 · <span class="up">+30,80 điểm (+1,68%)</span> · 221 mã tăng / 94 mã giảm trên HOSE</span></div>
+<div class="kv"><span class="k">Khối ngoại</span><span class="v">mua ròng ~467 tỷ đồng trên HOSE · thanh khoản HOSE 16.901 tỷ đồng</span></div>
+<div class="kv"><span class="k">Cú hích</span><span class="v">Ngân hàng Nhà nước sẽ mua ngoại tệ giao ngay vào thứ Hai và thứ Tư hằng tuần, bắt đầu từ 11/11</span></div>
+<p class="small" style="margin-top:10px">Kinh tế vĩ mô vẫn là điểm tựa: GDP quý 3 tăng 9,95%, 9 tháng tăng 9,01%; xuất nhập khẩu 10 tháng lần đầu vượt 1.000 tỷ USD; FDI đăng ký gần 54,85 tỷ USD (+74%); IMF nâng dự báo tăng trưởng Việt Nam năm 2026 lên 8,4%.</p>
+</section>
+
+<section class="card">
+<h2>Tuần này nhìn trước</h2>
+<p class="sub">Bốn mốc đáng ghim lịch.</p>
+<ul class="ahead">
+<li><span class="when">Thứ Ba 10/11</span><div class="what">CPI tháng 10 của Mỹ (20:30 VN)<span>Kỳ vọng +0,3% tháng, lõi +0,2%; lần này không có số liệu năm. PAHO họp 10–13/11 về trạng thái loại trừ sởi của Mỹ. Bão Fung-Wong vào Biển Đông.</span></div></li>
+<li><span class="when">Thứ Tư 11/11</span><div class="what">Hạ viện Mỹ dự kiến bỏ phiếu luận tội Hegseth<span>Massie trình 8 điều khoản hôm 9/11; lãnh đạo Cộng hòa có thể tìm cách bác bằng thủ tục. Chủ tịch Hội đồng Liên bang Nga thăm Việt Nam 11–13/11.</span></div></li>
+<li><span class="when">Thứ Sáu 13/11</span><div class="what">PPI tháng 10 của Mỹ<span>Kỳ vọng +0,4% theo tháng — mảnh ghép cuối về lạm phát trước quyết định của Fed tháng 12.</span></div></li>
+<li><span class="when">Trong tuần</span><div class="what">Bão Fung-Wong hướng về Đài Loan / Đông Nam Trung Quốc<span>Không đổ bộ Việt Nam. Bão Fung-Wong ra khỏi Biển Đông chiều 12/11, hướng về Đài Loan.</span></div></li>
+</ul>
+</section>
+
+
+<section class="card wide">
+<h2>Tin hôm qua <span class="tag">Lưu trữ theo ngày</span></h2>
+<p class="sub">Các bản tin đã đăng — đọc lại nguyên vẹn, không chỉnh sửa.</p>
+<ul class="news">
+<li><div class="h"><a href="/2026-11-09.html" style="color:var(--ink)">Thứ Hai 9/11/2026</a></div><p>Stephen Miller nhậm chức Chánh văn phòng · Hạ viện trở lại, Massie ép bỏ phiếu luận tội Hegseth · CPI tháng 10 chờ công bố tối 10/11 · Siêu bão Fung-Wong đổ bộ Philippines.</p></li>
+<li><div class="h"><a href="/2026-11-08.html" style="color:var(--ink)">Chủ Nhật 8/11/2026</a></div><p>Berkshire Hathaway quý 3: doanh thu vượt kỳ vọng · Stephen Miller nhậm chức Chánh văn phòng 9/11 · Mưa lũ sau bão Kalmaegi, thiệt hại tăng.</p></li>
+<li><div class="h"><a href="/2026-11-07.html" style="color:var(--ink)">Thứ Bảy 7/11/2026</a></div><p>Mỹ – Iran: đã có đòn đánh, vẫn đang đối thoại · Berkshire Hathaway trước giờ công bố quý 3 · Bão Kalmaegi đổ bộ Gia Lai – Đắk Lắk.</p></li>
+</ul>
+</section>
+
+</div>
+</main>
+<p class="bottom-note">Giá Bitcoin, S&amp;P 500, Nasdaq và Dow Jones tự cập nhật khi có mạng — kèm tổng hợp tin tối Thứ Ba 10/11: CPI tháng 10 công bố 20:30, luận tội Hegseth bỏ phiếu thứ Tư, chứng khoán Mỹ bật mạnh, và bão số 14 Fung-Wong vào Biển Đông.</p>
+<footer>Tổng hợp tin — phần tin tổng hợp đến tối Thứ Ba 10/11/2026 (giờ Việt Nam). Giá live lấy trực tiếp từ Binance (BTC) và Stooq/Yahoo Finance (chỉ số Mỹ, miễn phí nên có thể trễ ~15 phút) ngay trong trình duyệt của người xem.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+try{$("dateline").textContent=new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});}catch(e){}
+function fmt(n,d){return Number(n).toLocaleString("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtPct(p){var s=(p>=0?"+":"−")+fmt(Math.abs(p),2)+"%";return s;}
+function nowStr(){return new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});}
+function fetchT(url,ms){var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||9000);return fetch(url,{signal:c.signal,cache:"no-store"}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error("HTTP "+r.status);return r;}).catch(function(e){clearTimeout(t);throw e;});}
+function fetchJson(url,ms){return fetchT(url,ms).then(function(r){return r.json();});}
+function fetchText(url,ms){return fetchT(url,ms).then(function(r){return r.text();});}
+function proxied(url){return [url,"https://api.allorigins.win/raw?url="+encodeURIComponent(url),"https://corsproxy.io/?url="+encodeURIComponent(url)];}
+function tryUrls(urls,reader){var p=Promise.reject(new Error("start"));urls.forEach(function(u){p=p.catch(function(){return reader(u);});});return p;}
+function setCard(id,priceHtml,chgPct,metaHtml){
+ var card=$(id);if(!card)return;
+ card.querySelector('[data-field="price"]').textContent=priceHtml;
+ var chg=card.querySelector('[data-field="chg"]');
+ if(chgPct===null){chg.textContent="—";chg.className="chg";}
+ else{chg.textContent=fmtPct(chgPct);chg.className="chg "+(chgPct>=0?"up":"down");}
+ card.querySelector('[data-field="meta"]').innerHTML=metaHtml;
+}
+var state={btc:false,idx:0,idxTotal:3};
+function status(){
+ var dot=$("livedot"),txt=$("livestatus");
+ if(state.btc&&state.idx===state.idxTotal){dot.className="dot";txt.textContent="Đang live — giá tự cập nhật";}
+ else if(state.btc||state.idx>0){dot.className="dot";txt.textContent="Live một phần ("+(state.btc?1:0)+"/1 crypto · "+state.idx+"/"+state.idxTotal+" chỉ số Mỹ)";}
+ else{dot.className="dot err";txt.textContent="Chưa lấy được giá live — đang hiện ảnh chụp đóng cửa 9/11";}
+ $("lastupdate").textContent="Lần cập nhật giá: "+nowStr()+" (giờ của bạn)";
+}
+
+function loadBTC(){
+ var urls=["https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDT","https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT","https://api1.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT"];
+ return tryUrls(urls,function(u){return fetchJson(u);}).then(function(d){
+  var price=parseFloat(d.lastPrice),pct=parseFloat(d.priceChangePercent);
+  if(!isFinite(price))throw new Error("bad data");
+  state.btc=true;
+  setCard("card-btc",fmt(price,0)+" USD",pct,
+   "Cao 24h: "+fmt(d.highPrice,0)+" · Thấp 24h: "+fmt(d.lowPrice,0)+" USD<br>Nguồn: Binance (thời gian thực) · Cập nhật: "+nowStr());
+ }).catch(function(){
+  return fetchJson("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true").then(function(d){
+   var b=d.bitcoin;if(!b)throw new Error("bad data");state.btc=true;
+   setCard("card-btc",fmt(b.usd,0)+" USD",b.usd_24h_change,
+    "Nguồn dự phòng: CoinGecko · Cập nhật: "+nowStr());
+  }).catch(function(){state.btc=false;});
+ });
+}
+function parseYahoo(j,label){
+ var r=j&&j.chart&&j.chart.result&&j.chart.result[0];if(!r||!r.meta)throw new Error("bad yahoo");
+ var m=r.meta,price=m.regularMarketPrice,prev=m.chartPreviousClose||m.previousClose;
+ if(!isFinite(price))throw new Error("bad price");
+ var pct=prev?((price-prev)/prev*100):null;
+ var t=m.regularMarketTime?new Date(m.regularMarketTime*1000).toLocaleString("vi-VN"):"—";
+ return {price:price,pct:pct,meta:"Sàn: "+(m.exchangeName||"Mỹ")+" · Giờ dữ liệu: "+t+"<br>Nguồn: Yahoo Finance qua "+label+" (miễn phí, có thể trễ ~15 phút) · Cập nhật: "+nowStr()};
+}
+function loadYahoo(sym,label){
+ var base="https://query2.finance.yahoo.com/v8/finance/chart/"+encodeURIComponent(sym)+"?interval=1m&range=1d";
+ var urls=[base,"https://api.allorigins.win/raw?url="+encodeURIComponent(base),"https://corsproxy.io/?url="+encodeURIComponent(base)];
+ var names=["Yahoo trực tiếp","proxy (AllOrigins)","proxy (corsproxy.io)"];
+ var p=Promise.reject(new Error("start"));
+ urls.forEach(function(u,i){p=p.catch(function(){return fetchJson(u).then(function(j){return parseYahoo(j,names[i]);});});});
+ return p;
+}
+function parseStooq(text,symLabel){
+ var lines=text.trim().split(/\r?\n/);if(lines.length<2)throw new Error("bad csv");
+ var h=lines[0].split(","),row=lines[1].split(",");
+ var o={};h.forEach(function(k,i){o[k.trim()]=row[i];});
+ var close=parseFloat(o.Close),open=parseFloat(o.Open);
+ if(!isFinite(close)||o.Close==="N/D")throw new Error("no data");
+ var pct=isFinite(open)&&open!==0?((close-open)/open*100):null;
+ return {price:close,pct:pct,meta:"Cao ngày: "+o.High+" · Thấp ngày: "+o.Low+" · "+(o.Date||"")+" "+(o.Time||"")+"<br>Nguồn: Stooq ("+symLabel+", % thay đổi tính so với giá mở cửa) · Cập nhật: "+nowStr()};
+}
+function loadStooq(sym){
+ var base="https://stooq.com/q/l/?s="+encodeURIComponent(sym)+"&f=sd2t2ohlcv&h&e=csv";
+ return tryUrls(proxied(base),function(u){return fetchText(u);}).then(function(t){return parseStooq(t,sym);});
+}
+
+function loadIndex(cfg){
+ var attempts=[
+  function(){return loadYahoo(cfg.yahoo,cfg.name);},
+  function(){return loadStooq(cfg.stooq);},
+  function(){return loadYahoo(cfg.etf,cfg.name+" qua ETF "+cfg.etf);},
+  function(){return loadStooq(cfg.etf.toLowerCase()+".us");}
+ ];
+ var p=Promise.reject(new Error("start"));
+ attempts.forEach(function(fn){p=p.catch(fn);});
+ return p.then(function(res){
+  state.idx++;
+  var note=(res.meta.indexOf(cfg.etf)>=0||res.meta.indexOf("ETF")>=0)?" (qua ETF "+cfg.etf+")":"";
+  setCard(cfg.id,fmt(res.price,2),res.pct,res.meta+note);
+ }).catch(function(){/* giữ nguyên ảnh chụp đóng cửa 9/11 đã ghi sẵn trong thẻ */});
+}
+var INDICES=[
+ {id:"card-spx",name:"S&P 500",yahoo:"^GSPC",stooq:"^spx",etf:"SPY"},
+ {id:"card-nasdaq",name:"Nasdaq",yahoo:"^IXIC",stooq:"^ndq",etf:"QQQ"},
+ {id:"card-dow",name:"Dow Jones",yahoo:"^DJI",stooq:"^dji",etf:"DIA"}
+];
+function refreshBTC(){return loadBTC().then(status).catch(status);}
+function refreshIndices(){state.idx=0;return Promise.all(INDICES.map(loadIndex)).then(status).catch(status);}
+function refreshAll(){return Promise.all([refreshBTC(),refreshIndices()]);}
+var BTC_MS=20000,nextAt=Date.now()+BTC_MS;
+$("refreshbtn").addEventListener("click",function(){refreshAll();nextAt=Date.now()+BTC_MS;});
+refreshAll();
+setInterval(function(){refreshBTC();nextAt=Date.now()+BTC_MS;},BTC_MS);
+setInterval(refreshIndices,60000);
+setInterval(function(){
+ var s=Math.max(0,Math.round((nextAt-Date.now())/1000));
+ $("nextupdate").textContent="Tự làm mới sau: "+s+" giây";
+},1000);
+})();
+</script>
+</body>
+</html>
