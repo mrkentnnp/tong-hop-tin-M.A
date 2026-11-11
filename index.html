@@ -58,6 +58,11 @@ section.card{background:var(--surface);border:1px solid var(--line);border-radiu
 .ahead{list-style:none;margin:0;padding:0}.ahead li{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line)}.ahead li:last-child{border-bottom:none}.ahead .when{flex:0 0 86px;font-weight:800;font-size:13.5px;color:var(--accent);padding-top:2px}.ahead .what{font-size:15px}.ahead .what span{display:block;color:var(--soft);font-size:14px}
 .meter{margin-top:14px}.meter .track{height:10px;border-radius:999px;background:linear-gradient(90deg,#b3372e,#d98a2b 45%,#4d9e57);position:relative}.meter .pin{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translate(-50%,-50%)}.meter .labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:6px}
 footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
+
+.pager{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}
+.pager button{font:inherit;font-size:14px;font-weight:700;padding:7px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:default}
+.pager span{font-size:14px;color:var(--faint)}
 </style>
 </head>
 <body>
@@ -202,12 +207,17 @@ footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
 <section class="card wide">
 <h2>Tin hôm qua <span class="tag">Lưu trữ theo ngày</span></h2>
 <p class="sub">Các bản tin đã đăng — đọc lại nguyên vẹn, không chỉnh sửa.</p>
-<ul class="news">
+<ul class="news" id="archive-list">
 <li><div class="h"><a href="/2026-11-10.html" style="color:var(--ink)">Thứ Ba 10/11/2026</a></div><p>CPI tháng 10 tối 20:30 (kỳ vọng +0,3%) · Luận tội Hegseth bỏ phiếu thứ Tư · Chứng khoán Mỹ bật mạnh, BTC quanh 74.200 USD · Bão số 14 Fung-Wong vào Biển Đông.</p></li>
 <li><div class="h"><a href="/2026-11-09.html" style="color:var(--ink)">Thứ Hai 9/11/2026</a></div><p>Stephen Miller nhậm chức Chánh văn phòng · Hạ viện trở lại, Massie ép bỏ phiếu luận tội Hegseth · CPI tháng 10 chờ công bố tối 10/11 · Siêu bão Fung-Wong đổ bộ Philippines.</p></li>
 <li><div class="h"><a href="/2026-11-08.html" style="color:var(--ink)">Chủ Nhật 8/11/2026</a></div><p>Berkshire Hathaway quý 3: doanh thu vượt kỳ vọng · Stephen Miller nhậm chức Chánh văn phòng 9/11 · Mưa lũ sau bão Kalmaegi, thiệt hại tăng.</p></li>
 <li><div class="h"><a href="/2026-11-07.html" style="color:var(--ink)">Thứ Bảy 7/11/2026</a></div><p>Mỹ – Iran: đã có đòn đánh, vẫn đang đối thoại · Berkshire Hathaway trước giờ công bố quý 3 · Bão Kalmaegi đổ bộ Gia Lai – Đắk Lắk.</p></li>
 </ul>
+<nav class="pager" id="archive-pager" aria-label="Trang lưu trữ">
+<button type="button" id="archive-prev">← Trước</button>
+<span id="archive-pageinfo">Trang 1</span>
+<button type="button" id="archive-next">Sau →</button>
+</nav>
 </section>
 
 </div>
@@ -324,6 +334,30 @@ setInterval(function(){
  var s=Math.max(0,Math.round((nextAt-Date.now())/1000));
  $("nextupdate").textContent="Tự làm mới sau: "+s+" giây";
 },1000);
+})();
+</script>
+
+<script>
+(function(){
+var list=document.getElementById("archive-list");
+if(!list) return;
+var items=list.querySelectorAll("li");
+var per=3, page=0, pages=Math.max(1,Math.ceil(items.length/per));
+var prev=document.getElementById("archive-prev"),
+    next=document.getElementById("archive-next"),
+    info=document.getElementById("archive-pageinfo"),
+    pager=document.getElementById("archive-pager");
+function show(n){
+  page=Math.max(0,Math.min(n,pages-1));
+  items.forEach(function(li,i){li.style.display=(i>=page*per && i<(page+1)*per)?"":"none";});
+  if(info) info.textContent="Trang "+(page+1)+" / "+pages;
+  if(prev) prev.disabled=(page===0);
+  if(next) next.disabled=(page===pages-1);
+  if(pager) pager.style.display=(pages<=1)?"none":"flex";
+}
+if(prev) prev.addEventListener("click",function(){show(page-1);});
+if(next) next.addEventListener("click",function(){show(page+1);});
+show(0);
 })();
 </script>
 </body>
