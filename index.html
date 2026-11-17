@@ -357,10 +357,14 @@ setInterval(function(){
 },1000);
 })();
 /* Nut len dau trang: hien khi cuon xuong qua 300px */
+function toTopInit(){
 var toTopBtn=document.getElementById("toTopBtn");
-function toTopShow(){if(toTopBtn)toTopBtn.style.display=(window.scrollY>300)?"flex":"none";}
+if(!toTopBtn)return;
+function toTopShow(){toTopBtn.style.display=(window.scrollY>300)?"flex":"none";}
 window.addEventListener("scroll",toTopShow,{passive:true});
 toTopShow();
+}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",toTopInit);}else{toTopInit();}
 </script>
 
 <script>
