@@ -1,0 +1,414 @@
+<!doctype html>
+<!--
+  TỔNG HỢP TIN — BẢN LIVE (1 file duy nhất, tên trên GitHub: index.html)
+  Giá live cần có mạng khi mở trang: BTC lấy từ Binance, chỉ số Mỹ lấy từ Stooq/Yahoo (miễn phí, có thể trễ ~15 phút).
+  Mở offline vẫn đọc được phần tin và giá ảnh chụp đóng cửa phiên 23/11/2026.
+-->
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Tổng hợp tin</title>
+<style>
+:root{--bg:#f6f3ec;--surface:#fffdf8;--surface2:#efe9db;--ink:#1d2733;--soft:#4c5a68;--faint:#7c8a97;--line:#ddd5c3;--accent:#b4551f;--accent-soft:#f7e3d3;--teal:#14635d;--teal-soft:#dcebe7;--up:#177245;--down:#b3372e;--warn-bg:#fdf0dc;--warn-line:#e3b96a;--warn-ink:#6d4a08;--radius:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#131a21;--surface:#1c262f;--surface2:#232f3a;--ink:#eef2f4;--soft:#b3c0ca;--faint:#8696a2;--line:#33424e;--accent:#e08a4c;--accent-soft:#3a2a1c;--teal:#4db3a8;--teal-soft:#1e3533;--up:#4cc984;--down:#e87a70;--warn-bg:#35290f;--warn-line:#8a6a25;--warn-ink:#f0cd82}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
+.dateline{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,5.4vw,46px);line-height:1.12;margin:8px 0 10px}
+.navmenu{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+.navmenu a{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:var(--soft);background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 22px;transition:all .15s ease}
+.navmenu a:hover{border-color:var(--accent);color:var(--accent)}
+.navmenu a.active{color:#fff;background:linear-gradient(135deg,#b4551f,#d97b2e);border-color:#b4551f;box-shadow:0 4px 14px rgba(180,85,31,.35)}
+.navmenu a.teal.active{background:linear-gradient(135deg,#14635d,#2a8a7f);border-color:#14635d;box-shadow:0 4px 14px rgba(20,99,93,.35)}
+.bottom-note{color:var(--faint);font-size:13.5px;line-height:1.55;max-width:72ch;margin:22px auto 0;text-align:center;border-top:1px solid var(--line);padding-top:16px}
+.livebar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13.5px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--up);display:inline-block;margin-right:6px;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+.dot.err{background:var(--down);animation:none}.dot.wait{background:#d98a2b;animation:none}
+button.refresh{margin-left:auto;border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer;font-size:13.5px}
+button.refresh:active{transform:scale(.97)}
+.prices{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+@media(max-width:860px){.prices{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.prices{grid-template-columns:1fr}}
+.price{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.price .name{font-size:13px;font-weight:700;color:var(--soft);display:flex;justify-content:space-between;gap:8px}
+.price .sym{color:var(--faint);font-weight:600;font-size:12px}
+.price .val{font-size:clamp(24px,3.4vw,30px);font-weight:800;font-variant-numeric:tabular-nums;margin-top:4px}
+.price .chg{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.price .meta{font-size:12.5px;color:var(--faint);margin-top:8px;line-height:1.5}
+.up{color:var(--up)}.down{color:var(--down)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.grid .wide{grid-column:1/-1}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.card.featured{border:2px solid var(--accent);box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.card.featured h2{font-size:26px}
+.card.featured .news .h{font-size:16.5px}
+.card.featured .news li{padding:14px 0}
+.card h2{font-family:Georgia,serif;font-size:21px;margin:0 0 4px;font-weight:600}
+.card h2 .tag{font-family:system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--teal-soft);color:var(--teal);white-space:nowrap;vertical-align:middle}
+.card h2 .tag.hot{background:var(--accent-soft);color:var(--accent)}
+.card .sub{color:var(--faint);font-size:13.5px;margin:0 0 14px}.card p{margin:0 0 10px}.card p:last-child{margin-bottom:0}
+.small{font-size:14px;color:var(--soft)}.fineprint{font-size:12.5px;color:var(--faint);margin-top:12px}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14.5px}.kv:last-child{border-bottom:none}.kv .k{color:var(--soft)}.kv .v{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.alert{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--radius);padding:20px 22px}.alert h2{font-family:Georgia,serif;font-size:21px;margin:0 0 6px;color:var(--warn-ink)}.alert p{margin:0 0 10px}.alert .nums{display:flex;flex-wrap:wrap;gap:8px 22px;margin:12px 0;font-size:14px}.alert .nums b{font-size:19px}
+.news{list-style:none;margin:0;padding:0}.news li{padding:12px 0;border-bottom:1px solid var(--line)}.news li:first-child{padding-top:2px}.news li:last-child{border-bottom:none;padding-bottom:0}.news .h{font-weight:700;font-size:15.5px;margin-bottom:2px}.news p{margin:0;font-size:14.5px;color:var(--soft)}
+.ahead{list-style:none;margin:0;padding:0}.ahead li{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line)}.ahead li:last-child{border-bottom:none}.ahead .when{flex:0 0 86px;font-weight:800;font-size:13.5px;color:var(--accent);padding-top:2px}.ahead .what{font-size:15px}.ahead .what span{display:block;color:var(--soft);font-size:14px}
+.meter{margin-top:14px}.meter .track{height:10px;border-radius:999px;background:linear-gradient(90deg,#b3372e,#d98a2b 45%,#4d9e57);position:relative}.meter .pin{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translate(-50%,-50%)}.meter .labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:6px}
+footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
+
+.pager{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}
+.pager button{font:inherit;font-size:14px;font-weight:700;padding:7px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:default}
+.pager span{font-size:14px;color:var(--faint)}
+.dateline a{color:inherit;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="dateline" id="dateline"><a href="/" id="dateline-link">Thứ Ba 24/11/2026</a></div>
+<h1>Tổng hợp tin</h1>
+<nav class="navmenu" aria-label="Chuyên mục">
+<a href="/" class="active">Tổng hợp</a>
+<a href="/thoi-su.html" class="teal">Thời sự</a>
+</nav>
+<div class="livebar" role="status">
+<span><span class="dot wait" id="livedot"></span><b id="livestatus">Đang kết nối lấy giá…</b></span>
+<span id="lastupdate">Lần cập nhật giá: —</span>
+<span id="nextupdate"></span>
+<button class="refresh" id="refreshbtn" type="button">↻ Cập nhật ngay</button>
+</div>
+</header>
+
+<main>
+<section class="prices" aria-label="Giá trực tiếp">
+<article class="price" id="card-btc">
+<div class="name"><span>Bitcoin</span><span class="sym">BTC / USDT · Binance</span></div>
+<div class="val" data-field="price">≈ 61.258 USD</div>
+<div class="chg" data-field="chg">—</div>
+<div class="meta" data-field="meta">Ảnh chụp sáng 24/11: quanh 61.258 USD — 24h: cao ~64.603 USD, thấp ~60.386 USD.<br>Đang chờ giá live…</div>
+</article>
+<article class="price" id="card-spx">
+<div class="name"><span>S&amp;P 500</span><span class="sym">^SPX · dự phòng SPY</span></div>
+<div class="val" data-field="price">7.237,17</div>
+<div class="chg up" data-field="chg">+4,73% <span style="font-weight:500;color:var(--faint)">(đóng cửa 23/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 23/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+<article class="price" id="card-nasdaq">
+<div class="name"><span>Nasdaq</span><span class="sym">^IXIC · dự phòng QQQ</span></div>
+<div class="val" data-field="price">24.089,56</div>
+<div class="chg up" data-field="chg">+6,51% <span style="font-weight:500;color:var(--faint)">(đóng cửa 23/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 23/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+<article class="price" id="card-dow">
+<div class="name"><span>Dow Jones</span><span class="sym">^DJI · dự phòng DIA</span></div>
+<div class="val" data-field="price">49.595,31</div>
+<div class="chg up" data-field="chg">+3,01% <span style="font-weight:500;color:var(--faint)">(đóng cửa 23/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 23/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+</section>
+<p class="fineprint">Cách đọc: khi lấy được giá live, mỗi ô sẽ ghi rõ <b>nguồn</b> và <b>giờ cập nhật</b>. Nếu ghi “ảnh chụp đóng cửa 23/11” thì đó <b>không phải</b> giá live. Bitcoin tự làm mới mỗi 20 giây; chứng khoán Mỹ mỗi 60 giây (ngoài giờ giao dịch Mỹ, giá đứng ở mức đóng cửa gần nhất). Đây là thông tin thị trường, không phải lời khuyên đầu tư.</p>
+
+<div class="grid">
+<section class="card wide featured">
+<h2>Tin đáng chú ý sáng 24/11 <span class="tag hot">Nổi bật</span></h2>
+<p class="sub">Những diễn biến lớn đang mở, chưa có hồi kết — tổng hợp đến sáng 24/11/2026.</p>
+<ul class="news">
+<li><div class="h">Jensen Huang trở lại làm CEO Nvidia sau 12 ngày — cổ phiếu tăng 31%, phố Wall có ngày tốt nhất từ tháng 4/2025</div><p>Sáng thứ Hai 23/11 (giờ Mỹ), HĐQT Nvidia thông báo tái bổ nhiệm Jensen Huang làm chủ tịch, CEO và thành viên HĐQT, hiệu lực ngay — chỉ 12 ngày sau khi ông từ chức và 6 ngày sau khi Chủ tịch Harvey Jones còn nói HĐQT không có ý định đưa ông trở lại. Ông Trump nói trên CNBC rằng chính ông đã thuyết phục HĐQT, gọi Huang là nhân tố then chốt với công ty và đất nước. Cổ phiếu Nvidia đóng cửa khoảng 165,03 USD, tăng 31,48% (CNN; Investopedia ghi +31%) — ngày tăng mạnh nhất từ 2003, tăng thêm 952 tỷ USD vốn hóa. S&amp;P 500 tăng 4,73% lên 7.237,17 điểm, Nasdaq tăng 6,51% lên 24.089,56 điểm, Dow Jones tăng 3,01% lên 49.595,31 điểm — cả ba đều có ngày tăng mạnh nhất từ tháng 4/2025, chấm dứt chuỗi 7 phiên giảm của S&amp;P 500 và đưa cả S&amp;P 500 lẫn Dow ra khỏi vùng điều chỉnh.</p></li>
+<li><div class="h">Fed: PCE lõi tháng 10 và GDP quý 3 công bố tối mai 25/11 — bài kiểm tra cuối trước cuộc họp tháng 12</div><p>Số lạm phát cuối cùng trước cuộc họp Fed 8–9/12 công bố lúc 20:30 tối mai giờ VN: PCE lõi kỳ vọng +0,3% theo tháng, +3,2% theo năm; GDP quý 3 ước tính lần 2 kỳ vọng khoảng 3,5% quy năm. Thị trường vẫn định giá gần như chắc chắn Fed tăng lãi suất 0,25 điểm ngày 9/12 (xác suất 88,6–98% tùy thời điểm chụp; thăm dò Reuters: cả 101 chuyên gia đều dự báo +0,25 điểm). Phiên tăng mạnh 23/11 không làm thay đổi định giá này; lợi suất 10 năm gần như đứng yên ở 4,94%. Thị trường Mỹ nghỉ Lễ Tạ ơn thứ Năm 26/11, đóng cửa sớm thứ Sáu 27/11.</p></li>
+<li><div class="h">Bitcoin quanh 61.258 USD, giữ trên 60.000 USD phiên thứ ba liên tiếp; vàng hồi lên khoảng 3.635 USD/oz</div><p>Bitcoin sáng nay quanh 61.258 USD (07:37 giờ VN), trong 24 giờ cao nhất khoảng 64.603 USD, thấp nhất khoảng 60.386 USD; đóng cửa 23/11 ở 61.326,86 USD (Finnhub). Dù vậy, BTC vẫn giảm khoảng 24% trong tháng 11, khoảng 31% từ đầu năm và khoảng 51% so với đỉnh 126.080 USD ngày 6/10/2025. Vàng thế giới hồi mạnh: hợp đồng tương lai tăng 3,4% phiên 23/11 lên khoảng 3.635 USD/oz, sau khi chạm đáy 14 tháng cuối tuần trước; vàng miếng SJC sáng nay 130–135 triệu đồng/lượng, tăng 1,5 triệu so với hôm qua.</p></li>
+<li><div class="h">Iran: Bahrain chặn nhiều đòn tấn công; Tehran tính đưa 14 tàu dầu xuyên phong tỏa của Mỹ — dầu vẫn rơi về 80,25 USD</div><p>Lực lượng phòng không Bahrain đã chặn nhiều đòn tấn công của Iran cuối tuần qua, không có thương vong; một cơ sở công nghiệp dân sự ở đảo Sitra bị đánh trúng, gây cháy, 2 người bị thương. Truyền thông Iran nói Tehran chuẩn bị đưa 14 tàu dầu qua phong tỏa hải quân của Mỹ tại vịnh Ba Tư, đối mặt nguy cơ chạm trán tàu chiến Mỹ; ông Trump cảnh báo sẽ đánh chìm tàu nào cố vượt phong tỏa và nói có thể nối lại không kích Iran sau Năm mới nếu không đạt thỏa thuận. Chủ tịch Hạ viện sắp nhậm chức Hakeem Jeffries tuyên bố đảng Dân chủ sẽ tìm cách chấm dứt chiến tranh với Iran khi kiểm soát Hạ viện từ tháng 1. Dù căng thẳng leo thang, giá dầu vẫn giảm do dòng chảy qua Hormuz được duy trì: WTI đóng cửa khoảng 80,25 USD (−3,8%), thấp nhất từ tháng 8; Brent khoảng 91,72 USD.</p></li>
+<li><div class="h">Tối nay: Ngày Văn hóa Việt Nam — pháo hoa 3 điểm, 3D Mapping, chương trình nghệ thuật 19:30 tại Nguyễn Huệ</div><p>Tối nay 24/11, TP.HCM bắn pháo hoa lúc 21:00–21:15 tại 3 điểm: đầu hầm sông Sài Gòn (1.000 quả tầm cao, 200 quả tầm thấp), công viên – phố đi bộ Bạch Đằng ở Thủ Dầu Một (420 quả tầm cao, 80 quả tầm thấp) và quảng trường Tháp Tam Thắng ở Vũng Tàu (420 quả tầm cao, 80 quả tầm thấp). Chương trình nghệ thuật đặc biệt diễn ra 19:30 tại phố đi bộ Nguyễn Huệ, nối cầu truyền hình với Bình Dương và Vũng Tàu; trình chiếu 3D Mapping trước trụ sở UBND TP.HCM (86 Lê Thánh Tôn) và khách sạn Rex (141 Nguyễn Huệ). Hôm nay là ngày nghỉ hưởng nguyên lương đầu tiên nhân Ngày Văn hóa Việt Nam (24/11 hằng năm); Dinh Độc Lập miễn phí vé tham quan; chứng khoán Việt Nam nghỉ giao dịch, mở cửa lại sáng mai 25/11.</p></li>
+<li><div class="h">VN-Index hồi lên 1.697,14 điểm; FPT đảo chiều tăng 4,11% lên 46.850 đồng</div><p>Phiên thứ Hai 23/11, VN-Index tăng 8,35 điểm (+0,49%) lên 1.697,14 điểm, đảo chiều từ mức thấp trong phiên 1.671,72 điểm, có lúc tiến sát 1.700 điểm, chấm dứt chuỗi 4 phiên giảm. Nhóm công nghệ tăng 2,7%, dẫn đầu là FPT tăng 4,11% lên 46.850 đồng — phiên tăng đầu tiên sau 5 phiên giảm, khối ngoại mua ròng nhẹ hơn 25 tỷ đồng sau 12 phiên bán ròng; VIC tăng 1,57% lên 245.700 đồng, VHM tăng 1,82% lên 61.500 đồng. Khối ngoại vẫn bán ròng trên 3 sàn; thanh khoản 3 sàn khoảng 12.365 tỷ đồng. HNX-Index giảm 1,01% còn 232,23 điểm; UPCoM-Index tăng nhẹ lên 119,17 điểm.</p></li>
+<li><div class="h">Thời tiết hôm nay 24/11: Bắc Bộ chuyển rét, vùng núi rét đậm; TP.HCM nắng 32–34°C, chiều tối mưa dông</div><p>Không khí lạnh tăng cường ảnh hưởng Đông Bắc Bắc Bộ từ đêm qua rồi lan sang Tây Bắc Bộ, Bắc Trung Bộ và Trung Trung Bộ; từ hôm nay Bắc Bộ và Bắc Trung Bộ chuyển rét, vùng núi có nơi rét đậm, thấp nhất phổ biến 14–17 độ, vùng núi 11–14 độ, vùng núi cao có nơi dưới 10 độ, kèm mưa rào rải rác. Hà Nội thấp nhất 15–17 độ, cao nhất 20–22 độ. Mưa lớn miền Trung đã giảm. TP.HCM hôm nay nắng 32–34°C, chiều tối có mưa dông rải rác, có thể kèm lốc, sét, gió giật; triều cường Rằm tháng Mười đạt đỉnh 25–26/11, có thể vượt báo động III (Phú An và Nhà Bè 1,63–1,68m, Thủ Dầu Một 1,72–1,77m), gây ngập úng vùng trũng thấp ven sông.</p></li>
+</ul>
+</section>
+
+<section class="card wide">
+<h2>Fed: PCE ngày mai là bài kiểm tra cuối — đợt tăng 0,25 điểm tháng 12 vẫn được định giá cao</h2>
+<p class="sub">Phố Wall tăng mạnh nhất từ tháng 4/2025 sau tin Huang trở lại, nhưng kỳ vọng Fed tăng lãi suất không đổi; số PCE lõi tháng 10 và GDP quý 3 công bố tối mai 25/11.</p>
+<div class="kv"><span class="k">PCE / GDP ngày mai</span><span class="v">PCE lõi kỳ vọng +0,3% theo tháng, +3,2% theo năm (tháng 9: +3,1%) · PCE toàn phần kỳ vọng +3,8% theo năm · Cook ngày 20/11 ước tính PCE tháng 10 ở 3,8% và lõi 3,2% · GDP quý 3 ước tính lần 2 kỳ vọng khoảng 3,5% quy năm · công bố 20:30 giờ VN thứ Tư 25/11, kèm đơn đặt hàng bền lâu, số đơn xin trợ cấp thất nghiệp và Sách Beige lúc 2h sáng 26/11 giờ VN</span></div>
+<div class="kv"><span class="k">Phiên 23/11</span><span class="v">S&amp;P +4,73% · Nasdaq +6,51% · Dow +3,01% — tăng mạnh nhất từ tháng 4/2025 sau tin Huang trở lại làm CEO Nvidia · lợi suất 10 năm 4,94%, gần như đứng yên · VIX lùi về khoảng 26,6 từ 35,89 · vàng hồi lên khoảng 3.635 USD/oz · thị trường nghỉ Lễ Tạ ơn thứ Năm 26/11, đóng cửa sớm thứ Sáu 27/11</span></div>
+<div class="kv"><span class="k">Cook (20/11)</span><span class="v">Thống đốc Lisa Cook tại Santiago (Chile): lãi suất hiện tại chưa đủ thắt chặt, đợt tăng 0,25 điểm tháng 9 là chưa đủ · “chúng ta không có đặc ân được kiên nhẫn”, chờ lâu sẽ phải tăng mạnh hơn sau này · tăng trưởng “mạnh và đang tăng tốc”, lao động “vững” · không nói thẳng về cuộc họp tháng 12 (Reuters)</span></div>
+<div class="kv"><span class="k">Michigan cuối tháng 11</span><span class="v">niềm tin tiêu dùng 51,5 (sơ bộ 51,0; tháng 10: 48,0; kỳ vọng 51,5–51,6) · điều kiện hiện tại 49,4 · kỳ vọng 52,9 · kỳ vọng lạm phát 1 năm 3,7% (sơ bộ 4,3%; tháng 10: 4,7%) — giảm mạnh nhất từ tháng 6/2025 · 5 năm 3,3%</span></div>
+<div class="kv"><span class="k">Jefferson (19/11, đã có)</span><span class="v">Phó Chủ tịch Philip Jefferson tại Brasília: đầu tư trung tâm dữ liệu và điện toán tiên tiến “hiện đang gây áp lực tăng lên cầu và lạm phát”; lợi ích năng suất chỉ đến “trong tương lai” · nếu kỳ vọng lạm phát mất neo, cần phản ứng mạnh hơn (Reuters)</span></div>
+<div class="kv"><span class="k">Biên bản FOMC tháng 10 (đã có)</span><span class="v">gần như toàn bộ quan chức cho rằng cần tăng lãi suất thêm trong những tháng tới · giữ nguyên 3,75–4%, phiếu 10–2 (Cook, Hammack muốn tăng ngay) · một vài người: có thể tăng hơn 0,25 điểm tháng 12 nếu lạm phát xấu</span></div>
+<div class="kv"><span class="k">Xác suất tháng 12</span><span class="v">đợt tăng +0,25 điểm ngày 9/12 được định giá khoảng 88,6–98% tùy thời điểm chụp (CME FedWatch: 88,6% ngày 22/11 sau bán tháo, khoảng 92% lúc đóng cửa 20/11, khoảng 98% trong các bản tin tuần) · xác suất giữ nguyên khoảng 11,4% ngày 22/11 · đuôi +0,5 điểm đã nhạt dần khi lợi suất lùi dưới 5% · thăm dò Reuters 101 chuyên gia: tất cả dự báo +0,25 điểm tháng 12, chia rẽ về việc đây có phải đợt tăng cuối (56 người) hay còn ít nhất hai đợt nữa (45 người)</span></div>
+<div class="kv"><span class="k">CPI tháng 10 (đã có)</span><span class="v">+0,4% theo tháng · lõi +0,3% — đều nóng hơn dự báo</span></div>
+<div class="kv"><span class="k">PPI tháng 10 (đã có)</span><span class="v">toàn phần +0,3% theo tháng (kỳ vọng +0,4%) · +6,5% theo năm — cao nhất từ 11/2022 · lõi +0,3% theo tháng, +5,0% theo năm — đúng dự báo</span></div>
+<div class="kv"><span class="k">Bán lẻ tháng 10 (đã có)</span><span class="v">+0,2% theo tháng, đúng dự báo, chậm lại từ +0,8% tháng 9 · không tính ô tô +0,6% · ô tô −1,6%, đồ nội thất −2,3% · sau khi trừ CPI +0,4%, doanh số thực tế giảm</span></div>
+<div class="kv"><span class="k">Sắp tới</span><span class="v">PCE lõi tháng 10 và GDP quý 3 (ước tính lần 2) công bố 25/11 · thị trường Mỹ nghỉ Lễ Tạ ơn 26/11, đóng cửa sớm 27/11</span></div>
+<div class="kv"><span class="k">Quyết định của Fed</span><span class="v">8–9/12 · CPI tháng 11 công bố 10/12, ngay sau quyết định một ngày</span></div>
+<p class="small" style="margin-top:10px">Phiên 23/11, lợi suất 10 năm gần như đứng yên ở 4,94% dù chứng khoán tăng mạnh nhất từ tháng 4/2025 — thị trường vẫn cược Fed tăng lãi suất tháng 12. Kỳ vọng lạm phát của người tiêu dùng giảm mạnh trong tháng 11, nhưng Cook cảnh báo lạm phát thực tế đã ở trên 2% hơn 5 năm rưỡi.</p>
+</section>
+
+<section class="card wide">
+<h2>Jensen Huang: từ từ chức đến trở lại làm CEO sau 12 ngày</h2>
+<p class="sub">Từ tin tình báo đến chiếc ghế CEO trống sau 33 năm — và cú quay xe sau 12 ngày. Diễn biến mới 23/11 đủ lớn để đưa câu chuyện trở lại bản tin.</p>
+<div class="kv"><span class="k">29/10</span><span class="v">New York Times: tình báo Mỹ nghi Alice Huang — cựu giám đốc hãng mua chip Megaspeed (Singapore) — là tài sản tình báo Trung Quốc, có quan hệ thân thiết với Jensen Huang. Nvidia nói quan hệ chỉ liên quan công việc.</span></div>
+<div class="kv"><span class="k">Chủ nhật 8/11</span><span class="v">Huang gửi thư cho toàn bộ nhân viên, thừa nhận ngoại tình và xin lỗi gia đình, nhân viên. Hội đồng quản trị mở điều tra độc lập cùng ngày, nói “không có lý do tin” an ninh quốc gia hay bí mật Nvidia bị lộ.</span></div>
+<div class="kv"><span class="k">10–11/11</span><span class="v">Hội đồng thuê hãng luật Wachtell Lipton (cựu công tố viên liên bang Joon Kim) điều tra. Cổ đông kiện tập thể. NYT đưa tin về mối quan hệ thứ hai — với Kimberly Powell, phó chủ tịch mảng y tế, cấp dưới trực tiếp của Huang (Reuters chưa xác minh độc lập). WSJ: hội đồng chuẩn bị cách chức Huang.</span></div>
+<div class="kv"><span class="k">Thứ Năm 12/11</span><span class="v">Nvidia thông báo Huang từ chức chủ tịch, CEO và thành viên HĐQT, hiệu lực ngay — không nêu lý do. CFO Colette Kress làm CEO tạm quyền; Harvey Jones làm chủ tịch HĐQT đầu tiên. Cổ phiếu Nvidia mở cửa −14%, đóng cửa 166,19 USD (−4,34%).</span></div>
+<div class="kv"><span class="k">Thứ Sáu 13/11</span><span class="v">Financial Times: HĐQT đã tiếp cận CEO Arm Rene Haas về ghế CEO; HĐQT sau đó nói chưa chính thức tiếp xúc ứng viên nào, mọi đồn đoán còn sớm, đang chọn hãng tìm kiếm CEO. Cổ phiếu đóng cửa 162,85 USD (−2,01%), vốn hóa dưới 4.000 tỷ USD; AMD −8,75%, Broadcom −4,76%. Hạ viện đặt hạn chót tối 13/11 để Huang chấp nhận buổi phỏng vấn ghi âm ngày 1/12.</span></div>
+<div class="kv"><span class="k">Thứ Bảy 14/11</span><span class="v">Bộ trưởng Tài chính Scott Bessent công khai đổ lỗi Bộ Thương mại chậm đưa Megaspeed — hãng bị cáo buộc chuyển chip Nvidia sang Trung Quốc, mua hơn 4 tỷ USD từ 2024 — vào danh sách đen. Nhà đầu tư nói sự ra đi của Huang tạo lỗ hổng lớn cho tài trợ startup AI.</span></div>
+<div class="kv"><span class="k">Chủ nhật 15/11</span><span class="v">Kiến nghị đòi đưa Huang trở lại vượt 154.000 chữ ký, HĐQT chưa trả lời công khai. Nvidia cho biết Alice Huang đã chính thức rời Megaspeed từ 30/8/2025 và không còn giữ chức vụ nào ở đó. Huang đồng ý điều trần kín trước Hạ viện, chưa có ngày cụ thể. Quốc hội bắt đầu soi vai trò của Bộ trưởng Thương mại Howard Lutnick trong việc phê duyệt bán chip Nvidia sang Trung Quốc.</span></div>
+<div class="kv"><span class="k">Thứ Hai 16/11</span><span class="v">CNBC: HĐQT không bàn chuyện đưa Huang trở lại, tập trung vào điều tra của Wachtell Lipton. Kiến nghị “Stand with Jensen” vượt 180.000 chữ ký (Politico: hơn 185.000, gồm 9.300 nhân viên Nvidia); Trump nói không phản đối Huang trở lại; Bessent nói Nvidia cần CEO từ bên ngoài. Mỹ siết xuất khẩu chip: đóng đường vòng tiếp cận từ xa qua trung tâm dữ liệu ở nước thứ ba; Singapore, Thái Lan, Malaysia, Indonesia, Brazil phải xin giấy phép với chip tiên tiến nhất. The Information: hơn 7 tỷ USD chip bị chuyển qua mạng lưới của Alice Huang. Cổ phiếu đóng cửa 156,14 USD (−4,12%); chỉ số bán dẫn SOX −5,28%.</span></div>
+<div class="kv"><span class="k">Thứ Ba 17/11</span><span class="v">Nvidia báo cáo quý 3 sau giờ đóng cửa: doanh thu 115,8 tỷ USD (+103% so với cùng kỳ), lợi nhuận điều chỉnh 2,68 USD/cổ phiếu, trung tâm dữ liệu 107,6 tỷ USD — đều vượt kỳ vọng; hướng dẫn quý 4 ở 130 tỷ USD (±3%, quý 14 tuần), biên lợi nhuận gộp 71–72%. CEO tạm quyền Colette Kress nói “mọi việc vẫn diễn ra bình thường”, nâng dự báo tăng trưởng cả năm tài khóa 2028 lên 75%; cổ phiếu tăng trong giao dịch ngoài giờ. Kress họp toàn thể nhân viên ngày 18/11. Phiên thường, cổ phiếu đóng cửa 155,32 USD (−0,53%).</span></div>
+<div class="kv"><span class="k">Thứ Tư 18/11</span><span class="v">WSJ (17/11): SEC mở điều tra dân sự về việc Nvidia có công bố gây hiểu lầm cho nhà đầu tư hay không — SEC và Nvidia đều chưa xác nhận; trọng tâm gồm việc công ty bỏ chi tiết doanh thu theo địa lý Singapore và vụ Megaspeed. Chủ tịch HĐQT Harvey Jones nói HĐQT không có ý định đưa Huang trở lại, dù Huang nói sẵn sàng quay lại nếu được mời; Nvidia lập Ủy ban Giám sát An ninh quốc gia và Kiểm soát xuất khẩu. Cổ phiếu −2,89% còn 150,96 USD, dù đầu phiên tăng tới 2,7%; AMD +5,31%.</span></div>
+<div class="kv"><span class="k">Thứ Năm 19/11</span><span class="v">Cổ phiếu giảm tiếp 3,30% còn 145,98 USD (mở 152,92 USD, cao 158,13 USD, thấp 145,71 USD), vốn hóa quanh 3.750 tỷ USD. Ủy ban Năng lượng và Thương mại Hạ viện (Chủ tịch Brett Guthrie) yêu cầu Nvidia cử người dự buổi báo cáo không muộn hơn 2/12 về cáo buộc vi phạm kiểm soát xuất khẩu liên quan Megaspeed, đồng thời viết thư cho Bộ trưởng Thương mại Lutnick và cấp phó Kessler; Bộ Tư pháp và Bộ Thương mại đã xác nhận điều tra hình sự chung về Megaspeed hôm 16/11. Moody’s hạ triển vọng Nvidia xuống ổn định; báo cáo quý 10-Q bị chậm do điều tra; Wedbush nâng mục tiêu giá lên 293 USD. Ông Trump nói với Fox News tại Trung Quốc rằng vụ Nvidia chỉ được nhắc thoáng qua với ông Tập.</span></div>
+<div class="kv"><span class="k">Thứ Sáu 20/11</span><span class="v">Reuters dẫn hai nguồn tin: nhân viên thực thi của SEC đang xem xét các vấn đề kế toán tiềm tàng tại Nvidia — lần đầu trọng tâm điều tra được xác định là kế toán, gồm việc công ty bỏ số doanh thu Singapore khỏi báo cáo theo địa lý năm ngoái; Reuters chưa xác định được thời điểm mở điều tra hay hạng mục cụ thể, SEC từ chối bình luận, Nvidia chưa phản hồi ngay. Cổ phiếu đóng cửa 125,53 USD, giảm 14,01% (AP ghi −13,8%), ngày tệ nhất trong gần 2 năm, tuần mất 22,9% (tuần tệ nhất từ tháng 10/2008), giảm 47,5% từ đỉnh tháng 10. Tổng chưởng lý California Rob Bonta hôm 19/11 đã gửi trát điều tra cho Nvidia về khả năng Trung Quốc nhận chip tiên tiến và việc lừa dối nhà đầu tư. NYT lần đầu báo cáo Nvidia từng đạt thỏa thuận 1 triệu USD vào giữa thập niên 2000 với một cựu trưởng bộ phận nhân sự bị sa thải sau khi nêu lo ngại về hành vi của Huang (qua Forbes).</span></div>
+<div class="kv"><span class="k">Thứ Bảy 21/11</span><span class="v">Ông Trump tại Nhà Trắng (thứ Sáu 20/11 giờ Mỹ) giục Nvidia chấp nhận lời xin lỗi và đưa Huang trở lại, nói Huang giúp Mỹ dẫn trước khoảng 10 năm về chip AI và cho biết đã nhắc tới Huang với ông Tập; HĐQT vẫn giữ lập trường không đưa Huang trở lại. Huang đồng ý điều trần công khai trước Ủy ban Ngân hàng Thượng viện, Chủ tịch Tim Scott đề nghị ngày 3/12 và muốn nghe Huang cùng Bộ trưởng Lutnick trước Giáng sinh. Tổng chưởng lý California Rob Bonta đã gửi trát điều tra cho Nvidia hôm 19/11. Cuối tuần không có phiên giao dịch; cổ phiếu vẫn ở mức đóng cửa 125,53 USD.</span></div>
+<div class="kv"><span class="k">Chủ Nhật 22/11</span><span class="v">Bessent trên CBS “Face the Nation”: Mỹ đã liên hệ ban điều hành tạm quyền, các giám đốc độc lập và luật sư của Nvidia, cần biết ai phụ trách tuân thủ và “trách nhiệm dừng ở đâu” (cấp thấp, cấp trung hay cấp cao nhất); khi được hỏi có đồng ý đưa Huang trở lại như ông Trump hay không, Bessent nói cần thêm thông tin. Ông Trump hôm thứ Sáu 20/11 nói muốn Huang “xin lỗi lớn” rồi trở lại, cho biết đã nhắc Huang với ông Tập ở Thâm Quyến và ông Tập gọi Huang là “brilliant”; Bessent nói Huang không được nhắc trong các cuộc trao đổi của riêng ông với phía Trung Quốc. Kalshi: khả năng Huang trở lại khoảng 10% (từ 7%), Rene Haas (Arm) dẫn đầu cuộc đua CEO tiếp theo ở 26%, Tim Cook 4% (số liệu 20/11). Cuối tuần không có phiên giao dịch; cổ phiếu vẫn ở mức đóng cửa 125,53 USD.</span></div>
+<div class="kv"><span class="k">Thứ Hai 23/11</span><span class="v">HĐQT Nvidia thông báo tái bổ nhiệm Jensen Huang làm chủ tịch, CEO và thành viên HĐQT, hiệu lực ngay — chỉ 12 ngày sau khi ông từ chức và 6 ngày sau khi Chủ tịch Harvey Jones còn nói HĐQT không có ý định đưa ông trở lại. Ông Trump nói trên CNBC rằng chính ông đã thuyết phục HĐQT, gọi Huang là nhân tố then chốt với công ty và đất nước; trước đó ông Trump đã giục Nvidia chấp nhận lời xin lỗi và đưa Huang trở lại, cho biết đã nhắc tới Huang với ông Tập ở Thâm Quyến. Cổ phiếu đóng cửa khoảng 165,03 USD, tăng 31,48% (CNN; Investopedia ghi +31%) — ngày tăng mạnh nhất từ 2003, tăng thêm 952 tỷ USD vốn hóa, kéo S&amp;P 500 +4,73%, Nasdaq +6,51%, Dow +3,01%.</span></div>
+<div class="kv"><span class="k">Chưa rõ / sắp tới</span><span class="v">HĐQT đã tái bổ nhiệm Huang, chấm dứt cuộc tìm CEO chính thức (trước đó đã thuê Heidrick &amp; Struggles). Cuộc điều tra độc lập của Wachtell Lipton vẫn chưa công bố kết luận; phạm vi và thời điểm mở điều tra của SEC chưa rõ, chưa ai bị buộc tội gì. Huang điều trần kín trước ba ủy ban Hạ viện ngày 1/12 theo lịch hiện tại và có thể thêm một phiên trước Ủy ban Ngân hàng Thượng viện trong tháng 12; buổi báo cáo của Nvidia trước Ủy ban Năng lượng và Thương mại hạn chót 2/12; vụ kiện tập thể Kistenmacher v. NVIDIA có hạn chót nguyên đơn chính 8/1/2027. Trát điều tra của Tổng chưởng lý California (19/11) vẫn còn hiệu lực.</span></div>
+</section>
+
+<section class="card">
+<h2>Spotlight: Anthropic lùi tiếp về ~87 USD dù phố Wall tăng mạnh <span class="tag">ANT</span></h2>
+<p class="sub">Câu chuyện nổi bật ngoài các chủ đề thường ngày.</p>
+<div class="kv"><span class="k">Phiên thứ Hai 23/11</span><span class="v">đóng cửa khoảng 87 USD, giảm hơn 1% (Investopedia) — phiên thứ ba liên tiếp đi xuống, ngược chiều Nasdaq +6,51% · từ đỉnh 115,10 USD ngày đầu đã giảm khoảng 24% · từ giá đóng cửa ngày đầu 97,17 USD đã mất khoảng 10%</span></div>
+<div class="kv"><span class="k">Ngày thứ hai 20/11 (đã có)</span><span class="v">mở 89,86 USD · cao 92,56 USD · thấp 83,05 USD · đóng cửa 88,91 USD, giảm 8,50% (Finnhub/CNN) · AP ghi 88,30 USD, giảm 9,1% — hai mức chênh nhau 0,61 USD, chưa thống nhất</span></div>
+<div class="kv"><span class="k">Ngày đầu 19/11 (đã có)</span><span class="v">mở 111,50 USD (+34% so với giá IPO 83 USD) · cao 115,10 USD · đóng cửa 97,17 USD (+17,07%)</span></div>
+<div class="kv"><span class="k">Quy mô</span><span class="v">bán 980 triệu cổ phiếu loại A ở 83 USD, huy động khoảng 81,3 tỷ USD — IPO lớn nhất từ trước đến nay, vượt SpaceX (75 tỷ USD) · đợt chào bán hoàn tất 20/11</span></div>
+<div class="kv"><span class="k">Diễn biến</span><span class="v">ngày thứ hai diễn ra trong phiên bán tháo AI, Nasdaq mất 5,28% · ngày thứ Hai 23/11 diễn ra trong phiên phố Wall tăng mạnh nhất từ tháng 4/2025 nhưng ANT vẫn giảm — cổ phiếu chưa hưởng lợi từ cú hồi của nhóm AI</span></div>
+<p class="small" style="margin-top:10px">Anthropic là hãng phát triển mô hình AI hàng đầu đầu tiên lên sàn; OpenAI vẫn chưa niêm yết. Ngày thứ hai, giá có lúc xuống 83,05 USD — chỉ hơn giá chào bán 83 USD có 5 xu — rồi hồi về mức đóng cửa.</p>
+</section>
+
+<section class="card">
+<h2>Crypto &amp; tâm lý thị trường <span class="tag">Sáng 24/11</span></h2>
+<p class="sub">Ngoài giá BTC live ở trên, đây là bức tranh dòng tiền lúc sáng 24/11.</p>
+<div class="kv"><span class="k">BTC sáng 24/11</span><span class="v">quanh 61.258 USD (07:37 giờ VN, +0,02%) · 24h: cao ~64.603 USD · thấp ~60.386 USD · đóng cửa 23/11 ở 61.326,86 USD (Finnhub)</span></div>
+<div class="kv"><span class="k">Diễn biến</span><span class="v down">tháng 11 giảm khoảng 24% · từ đầu năm giảm khoảng 31% · thấp hơn khoảng 51% so với đỉnh 126.080 USD ngày 6/10/2025 · giữ trên 60.000 USD phiên thứ ba liên tiếp kể từ cú quét về 55.130 USD sáng sớm 21/11</span></div>
+<div class="kv"><span class="k">Tâm lý / ETF</span><span class="v">rút ròng khỏi ETF Bitcoin giao ngay tại Mỹ trong tháng 11 khoảng 2,9–3,5 tỷ USD tùy cách đếm (tính đến cuối tuần trước) · riêng IBIT rút 541 triệu USD ngày 19/11, mức rút một ngày lớn nhất của quỹ này</span></div>
+<div class="kv"><span class="k">Strategy</span><span class="v">nắm 850.849 BTC, giá vốn trung bình 75.452 USD — BTC đang thấp hơn khoảng 19% so với giá vốn · sẽ rời các chỉ số MSCI sau phiên 30/11</span></div>
+<p class="small" style="margin-top:10px">Giá biến động nhanh — ô giá live ở trên là số mới nhất. Đây là thông tin thị trường, không phải lời khuyên đầu tư.</p>
+</section>
+
+
+
+<section class="card">
+<h2>Chứng khoán Mỹ — phiên 23/11 <span class="tag">Ảnh chụp</span></h2>
+<p class="sub">Số đóng cửa phiên 23/11 (thứ Hai) để đối chiếu với giá live ở trên.</p>
+<div class="kv"><span class="k">Nasdaq</span><span class="v">24.089,56 · <span class="up">+6,51%</span> · +1.471,83 điểm — tăng điểm ngày lớn thứ hai trong lịch sử, tốt nhất từ tháng 4/2025 · đã hồi lại phần lớn mức giảm 10% của tuần trước</span></div>
+<div class="kv"><span class="k">S&amp;P 500</span><span class="v">7.237,17 · <span class="up">+4,73%</span> · +326,78 điểm — tăng điểm ngày lớn thứ hai trong lịch sử · chấm dứt chuỗi 7 phiên giảm · vẫn thấp hơn khoảng 7,4% so với đỉnh 6/10 (CNN)</span></div>
+<div class="kv"><span class="k">Dow Jones</span><span class="v">49.595,31 · <span class="up">+3,01%</span> · +1.447,98 điểm · thoát vùng điều chỉnh · vẫn thấp hơn khoảng 8,75% so với đỉnh 5/8 (CNN)</span></div>
+<div class="kv"><span class="k">Nvidia / Anthropic</span><span class="v">Nvidia khoảng 165,03 USD · <span class="up">+31,48%</span> — ngày tốt nhất từ 2003, +952 tỷ USD vốn hóa · Anthropic (ANT) khoảng 87 USD · <span class="down">−hơn 1%</span> · chỉ số bán dẫn SOXX +14% · Marvell và Micron +hơn 18%, Intel +16%, Dell +hơn 20%</span></div>
+<div class="kv"><span class="k">VIX / trái phiếu</span><span class="v">VIX khoảng 26,62, lùi mạnh từ 35,89 · lợi suất 10 năm 4,94%, gần như đứng yên · Russell 2000 2.669,66 · <span class="up">+3,40%</span></span></div>
+<div class="kv"><span class="k">Vàng / dầu</span><span class="v">Vàng COMEX khoảng 3.635 USD/oz (+3,4%), hồi từ đáy 14 tháng · Dầu WTI khoảng 80,25 USD (−3,8%), thấp nhất từ tháng 8 · Brent khoảng 91,72 USD</span></div>
+<p class="small" style="margin-top:10px">CrowdStrike −9% sau khi công bố mua Zscaler bằng cổ phiếu trị giá khoảng 44 tỷ USD (Zscaler +18%); Tesla +11%, Alphabet +6%, Meta +6%. Thị trường nghỉ Lễ Tạ ơn thứ Năm 26/11, đóng cửa sớm thứ Sáu 27/11; báo cáo tuần này gồm Dell, HPE, Analog Devices, Best Buy, Dollar Tree.</p>
+</section>
+
+
+
+
+<section class="card">
+<h2>Chứng khoán Việt Nam — phiên 23/11 <span class="tag">VN-Index</span></h2>
+<p class="sub">Đảo chiều hồi phục, nhóm công nghệ dẫn nhịp; thị trường nghỉ hôm nay 24/11.</p>
+<div class="kv"><span class="k">VN-Index</span><span class="v">1.697,14 · <span class="up">+8,35 điểm (+0,49%)</span> · đảo chiều từ mức thấp trong phiên 1.671,72 điểm, có lúc tiến sát 1.700 điểm · chấm dứt chuỗi 4 phiên giảm</span></div>
+<div class="kv"><span class="k">VN30</span><span class="v">1.791,12 · <span class="up">+4,28 điểm</span></span></div>
+<div class="kv"><span class="k">HNX / UPCoM</span><span class="v">HNX-Index 232,23 · <span class="down">−2,36 điểm (−1,01%)</span> · UPCoM-Index 119,17 · <span class="up">+0,03 điểm (+0,03%)</span></span></div>
+<div class="kv"><span class="k">Khối ngoại</span><span class="v">tiếp tục bán ròng trên 3 sàn · riêng FPT được mua ròng nhẹ hơn 25 tỷ đồng sau 12 phiên bán ròng</span></div>
+<div class="kv"><span class="k">Thanh khoản</span><span class="v">3 sàn khoảng 12.365 tỷ đồng, giảm so với phiên trước</span></div>
+<div class="kv"><span class="k">FPT</span><span class="v">46.850 đồng · <span class="up">+4,11%</span> · phiên tăng đầu tiên sau 5 phiên giảm liên tiếp · giá trị giao dịch 778 tỷ đồng, cao nhất thị trường · nhóm công nghệ +2,7%</span></div>
+<div class="kv"><span class="k">Nhóm dẫn dắt</span><span class="v">VIC +1,57% lên 245.700 đồng (+6,18 điểm cho VN-Index) · VHM +1,82% lên 61.500 đồng (+1,9 điểm) · PNJ giảm sàn −6,67% về 12.600 đồng</span></div>
+<div class="kv"><span class="k">Nhìn trước</span><span class="v">thị trường nghỉ giao dịch hôm nay 24/11 nhân Ngày Văn hóa Việt Nam, giao dịch trở lại 25/11 · vàng SJC sáng nay 130–135 triệu đồng/lượng (+1,5 triệu so với hôm qua)</span></div>
+<p class="small" style="margin-top:10px">Hôm nay thị trường nghỉ — chứng khoán Việt Nam giao dịch trở lại sáng mai 25/11 lúc 9:00.</p>
+</section>
+
+<section class="card">
+<h2>Tuần này nhìn trước</h2>
+<p class="sub">Năm mốc đáng ghim lịch.</p>
+<ul class="ahead">
+<li><span class="when">Tối nay 24/11</span><div class="what">Ngày Văn hóa Việt Nam — pháo hoa 3 điểm, chứng khoán nghỉ<span>TP.HCM bắn pháo hoa 21:00–21:15 tại đầu hầm sông Sài Gòn, phố đi bộ Bạch Đằng (Thủ Dầu Một) và quảng trường Tháp Tam Thắng (Vũng Tàu); chương trình nghệ thuật đặc biệt 19:30 tại phố đi bộ Nguyễn Huệ, 3D Mapping trước UBND TP.HCM và khách sạn Rex. Dinh Độc Lập miễn phí vé tham quan; chứng khoán Việt Nam nghỉ, giao dịch trở lại 25/11.</span></div></li>
+<li><span class="when">Thứ Tư 25/11</span><div class="what">Mỹ công bố PCE lõi tháng 10 và GDP quý 3<span>Số lạm phát cuối cùng trước cuộc họp Fed 8–9/12, công bố lúc 20:30 giờ VN: PCE lõi kỳ vọng +0,3% theo tháng, +3,2% theo năm; GDP quý 3 ước tính lần 2 kỳ vọng khoảng 3,5% quy năm. Triều cường TP.HCM đạt đỉnh 25–26/11, có thể vượt báo động III.</span></div></li>
+<li><span class="when">Thứ Năm 26/11</span><div class="what">Thị trường Mỹ nghỉ Lễ Tạ ơn<span>Chứng khoán Mỹ nghỉ thứ Năm 26/11, đóng cửa sớm thứ Sáu 27/11. Trước đó, Huang điều trần kín trước Hạ viện ngày 1/12; Fed quyết định lãi suất 8–9/12, thị trường vẫn cược tăng 0,25 điểm.</span></div></li>
+<li><span class="when">25–26/11</span><div class="what">Triều cường TP.HCM vượt báo động III<span>Đỉnh triều Rằm tháng Mười: Phú An và Nhà Bè 1,63–1,68m, Thủ Dầu Một 1,72–1,77m, vào khoảng 4–6h và 16–18h; cảnh báo ngập úng vùng trũng thấp ven sông.</span></div></li>
+<li><span class="when">29/11</span><div class="what">K-pop tại Vạn Phúc City<span>Annyeong HCMC Music Festival ngày 29/11 tại Vạn Phúc City có NCT DREAM, Chanyeol (EXO) và Super Junior-83z.</span></div></li>
+</ul>
+</section>
+
+
+<section class="card wide">
+<h2>Tin hôm qua <span class="tag">Lưu trữ theo ngày</span></h2>
+<p class="sub">Các bản tin đã đăng — đọc lại nguyên vẹn, không chỉnh sửa.</p>
+<ul class="news" id="archive-list">
+<li><div class="h"><a href="/2026-11-23.html" style="color:var(--ink)">Thứ Hai 23/11/2026</a></div><p>Jensen Huang trở lại làm CEO Nvidia · Chứng khoán Mỹ tăng mạnh nhất từ tháng 4/2025 · VN-Index hồi lên 1.697,14 điểm.</p></li>
+<li><div class="h"><a href="/2026-11-22.html" style="color:var(--ink)">Chủ Nhật 22/11/2026</a></div><p>Bitcoin quét về 55.130 USD rồi hồi trên 60.000 USD · Ông Trump giục đưa Jensen Huang trở lại · Quốc hội bế mạc với 38 luật được thông qua.</p></li>
+<li><div class="h"><a href="/2026-11-21.html" style="color:var(--ink)">Thứ Bảy 21/11/2026</a></div><p>Bán tháo AI: Nasdaq −5,28%, S&amp;P 500 và Dow vào vùng điều chỉnh · Nvidia −14% sau tin SEC điều tra kế toán · Bitcoin thủng 60.000 USD.</p></li>
+<li><div class="h"><a href="/2026-11-20.html" style="color:var(--ink)">Thứ Sáu 20/11/2026</a></div><p>Tuyên bố hòa bình ở Thâm Quyến · Anthropic đóng cửa ngày đầu 97,17 USD · Chứng khoán Mỹ giảm phiên thứ sáu liên tiếp.</p></li>
+<li><div class="h"><a href="/2026-11-19.html" style="color:var(--ink)">Thứ Năm 19/11/2026</a></div><p>Gặp ba bên Trump – Putin – Tập ở Thâm Quyến · Biên bản FOMC diều hâu · Anthropic chốt giá IPO 83 USD, lên sàn Nasdaq.</p></li>
+<li><div class="h"><a href="/2026-11-18.html" style="color:var(--ink)">Thứ Tư 18/11/2026</a></div><p>Nvidia vượt kỳ vọng lớn: doanh thu 115,8 tỷ USD · Chứng khoán Mỹ giảm phiên thứ tư liên tiếp · Trump đến Manila, họp Quad.</p></li>
+<li><div class="h"><a href="/2026-11-17.html" style="color:var(--ink)">Thứ Ba 17/11/2026</a></div><p>Nasdaq vào vùng điều chỉnh trước giờ Nvidia báo cáo · Ukraine tấn công drone lớn nhất từ đầu chiến tranh · Trump lên đường đi Manila.</p></li>
+<li><div class="h"><a href="/2026-11-16.html" style="color:var(--ink)">Thứ Hai 16/11/2026</a></div><p>Bitcoin thủng 62.000 USD rồi hồi về ~65.000 USD · FAA hơn 17.000 chuyến hủy · Trump – Putin – Tập gặp ba bên 19/11 · SpaceX bắt được Starship từ quỹ đạo.</p></li>
+<li><div class="h"><a href="/2026-11-15.html" style="color:var(--ink)">Chủ Nhật 15/11/2026</a></div><p>Bitcoin thủng 65.000 USD · FAA dỡ lệnh dừng bay · Trump – Putin – Tập gặp ba bên 19/11 · Starship lên quỹ đạo, mất tầng đẩy.</p></li>
+<li><div class="h"><a href="/2026-11-14.html" style="color:var(--ink)">Thứ Bảy 14/11/2026</a></div><p>FAA dừng bay toàn quốc vì sự cố viễn thông · Bitcoin thủng 70.000 USD · Dublin: trao đổi tù binh lớn nhất từ đầu chiến tranh · PPI tháng 10 nhẹ hơn dự báo.</p></li>
+<li><div class="h"><a href="/2026-11-13.html" style="color:var(--ink)">Thứ Sáu 13/11/2026</a></div><p>Jensen Huang từ chức CEO Nvidia · Bitcoin thủng 72.000 USD · PPI tháng 10 nhẹ hơn dự báo · VN-Index −12,15 điểm, khối ngoại bán ròng &gt;900 tỷ.</p></li>
+<li><div class="h"><a href="/2026-11-12.html" style="color:var(--ink)">Thứ Năm 12/11/2026</a></div><p>Jensen Huang từ chức CEO Nvidia · Chứng khoán Mỹ giảm nhẹ, BTC thủng 72.000 USD · Moscow chưa thỏa hiệp về lãnh thổ · VN-Index −12,15 điểm, khối ngoại bán ròng &gt;900 tỷ.</p></li>
+<li><div class="h"><a href="/2026-11-11.html" style="color:var(--ink)">Thứ Tư 11/11/2026</a></div><p>CPI tháng 10 nóng +0,4% · Luận tội Hegseth bị chặn 211–204 · Chứng khoán Mỹ quay đầu, Nvidia −5,47% · Đàm phán Nga – Ukraine ngày 2 ở Abu Dhabi.</p></li>
+<li><div class="h"><a href="/2026-11-10.html" style="color:var(--ink)">Thứ Ba 10/11/2026</a></div><p>CPI tháng 10 tối 20:30 (kỳ vọng +0,3%) · Luận tội Hegseth bỏ phiếu thứ Tư · Chứng khoán Mỹ bật mạnh, BTC quanh 74.200 USD · Bão số 14 Fung-Wong vào Biển Đông.</p></li>
+<li><div class="h"><a href="/2026-11-09.html" style="color:var(--ink)">Thứ Hai 9/11/2026</a></div><p>Stephen Miller nhậm chức Chánh văn phòng · Hạ viện trở lại, Massie ép bỏ phiếu luận tội Hegseth · CPI tháng 10 chờ công bố tối 10/11 · Siêu bão Fung-Wong đổ bộ Philippines.</p></li>
+<li><div class="h"><a href="/2026-11-08.html" style="color:var(--ink)">Chủ Nhật 8/11/2026</a></div><p>Berkshire Hathaway quý 3: doanh thu vượt kỳ vọng · Stephen Miller nhậm chức Chánh văn phòng 9/11 · Mưa lũ sau bão Kalmaegi, thiệt hại tăng.</p></li>
+<li><div class="h"><a href="/2026-11-07.html" style="color:var(--ink)">Thứ Bảy 7/11/2026</a></div><p>Mỹ – Iran: đã có đòn đánh, vẫn đang đối thoại · Berkshire Hathaway trước giờ công bố quý 3 · Bão Kalmaegi đổ bộ Gia Lai – Đắk Lắk.</p></li>
+</ul>
+<nav class="pager" id="archive-pager" aria-label="Trang lưu trữ">
+<button type="button" id="archive-prev">← Trước</button>
+<span id="archive-pageinfo">Trang 1</span>
+<button type="button" id="archive-next">Sau →</button>
+</nav>
+</section>
+
+</div>
+</main>
+<p class="bottom-note">Giá Bitcoin, S&amp;P 500, Nasdaq và Dow Jones tự cập nhật khi có mạng — kèm tổng hợp tin sáng Thứ Ba 24/11: Jensen Huang trở lại làm CEO Nvidia, phố Wall tăng mạnh nhất từ tháng 4/2025, và tối nay TP.HCM bắn pháo hoa nhân Ngày Văn hóa Việt Nam.</p>
+<footer>Tổng hợp tin — phần tin tổng hợp đến sáng Thứ Ba 24/11/2026 (giờ Việt Nam). Giá live lấy trực tiếp từ Binance (BTC) và Stooq/Yahoo Finance (chỉ số Mỹ, miễn phí nên có thể trễ ~15 phút) ngay trong trình duyệt của người xem.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+try{var dl=$("dateline-link");if(dl)dl.textContent=new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});}catch(e){}
+function fmt(n,d){return Number(n).toLocaleString("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtPct(p){var s=(p>=0?"+":"−")+fmt(Math.abs(p),2)+"%";return s;}
+function nowStr(){return new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});}
+function fetchT(url,ms){var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||9000);return fetch(url,{signal:c.signal,cache:"no-store"}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error("HTTP "+r.status);return r;}).catch(function(e){clearTimeout(t);throw e;});}
+function fetchJson(url,ms){return fetchT(url,ms).then(function(r){return r.json();});}
+function fetchText(url,ms){return fetchT(url,ms).then(function(r){return r.text();});}
+function proxied(url){return [url,"https://api.allorigins.win/raw?url="+encodeURIComponent(url),"https://corsproxy.io/?url="+encodeURIComponent(url)];}
+function tryUrls(urls,reader){var p=Promise.reject(new Error("start"));urls.forEach(function(u){p=p.catch(function(){return reader(u);});});return p;}
+function setCard(id,priceHtml,chgPct,metaHtml){
+ var card=$(id);if(!card)return;
+ card.querySelector('[data-field="price"]').textContent=priceHtml;
+ var chg=card.querySelector('[data-field="chg"]');
+ if(chgPct===null){chg.textContent="—";chg.className="chg";}
+ else{chg.textContent=fmtPct(chgPct);chg.className="chg "+(chgPct>=0?"up":"down");}
+ card.querySelector('[data-field="meta"]').innerHTML=metaHtml;
+}
+var state={btc:false,idx:0,idxTotal:3};
+function status(){
+ var dot=$("livedot"),txt=$("livestatus");
+ if(state.btc&&state.idx===state.idxTotal){dot.className="dot";txt.textContent="Đang live — giá tự cập nhật";}
+ else if(state.btc||state.idx>0){dot.className="dot";txt.textContent="Live một phần ("+(state.btc?1:0)+"/1 crypto · "+state.idx+"/"+state.idxTotal+" chỉ số Mỹ)";}
+ else{dot.className="dot err";txt.textContent="Chưa lấy được giá live — đang hiện ảnh chụp đóng cửa 23/11";}
+ $("lastupdate").textContent="Lần cập nhật giá: "+nowStr()+" (giờ của bạn)";
+}
+
+function loadBTC(){
+ var urls=["https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDT","https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT","https://api1.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT"];
+ return tryUrls(urls,function(u){return fetchJson(u);}).then(function(d){
+  var price=parseFloat(d.lastPrice),pct=parseFloat(d.priceChangePercent);
+  if(!isFinite(price))throw new Error("bad data");
+  state.btc=true;
+  setCard("card-btc",fmt(price,0)+" USD",pct,
+   "Cao 24h: "+fmt(d.highPrice,0)+" · Thấp 24h: "+fmt(d.lowPrice,0)+" USD<br>Nguồn: Binance (thời gian thực) · Cập nhật: "+nowStr());
+ }).catch(function(){
+  return fetchJson("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true").then(function(d){
+   var b=d.bitcoin;if(!b)throw new Error("bad data");state.btc=true;
+   setCard("card-btc",fmt(b.usd,0)+" USD",b.usd_24h_change,
+    "Nguồn dự phòng: CoinGecko · Cập nhật: "+nowStr());
+  }).catch(function(){state.btc=false;});
+ });
+}
+function parseYahoo(j,label){
+ var r=j&&j.chart&&j.chart.result&&j.chart.result[0];if(!r||!r.meta)throw new Error("bad yahoo");
+ var m=r.meta,price=m.regularMarketPrice,prev=m.chartPreviousClose||m.previousClose;
+ if(!isFinite(price))throw new Error("bad price");
+ var pct=prev?((price-prev)/prev*100):null;
+ var t=m.regularMarketTime?new Date(m.regularMarketTime*1000).toLocaleString("vi-VN"):"—";
+ return {price:price,pct:pct,meta:"Sàn: "+(m.exchangeName||"Mỹ")+" · Giờ dữ liệu: "+t+"<br>Nguồn: Yahoo Finance qua "+label+" (miễn phí, có thể trễ ~15 phút) · Cập nhật: "+nowStr()};
+}
+function loadYahoo(sym,label){
+ var base="https://query2.finance.yahoo.com/v8/finance/chart/"+encodeURIComponent(sym)+"?interval=1m&range=1d";
+ var urls=[base,"https://api.allorigins.win/raw?url="+encodeURIComponent(base),"https://corsproxy.io/?url="+encodeURIComponent(base)];
+ var names=["Yahoo trực tiếp","proxy (AllOrigins)","proxy (corsproxy.io)"];
+ var p=Promise.reject(new Error("start"));
+ urls.forEach(function(u,i){p=p.catch(function(){return fetchJson(u).then(function(j){return parseYahoo(j,names[i]);});});});
+ return p;
+}
+function parseStooq(text,symLabel){
+ var lines=text.trim().split(/\r?\n/);if(lines.length<2)throw new Error("bad csv");
+ var h=lines[0].split(","),row=lines[1].split(",");
+ var o={};h.forEach(function(k,i){o[k.trim()]=row[i];});
+ var close=parseFloat(o.Close),open=parseFloat(o.Open);
+ if(!isFinite(close)||o.Close==="N/D")throw new Error("no data");
+ var pct=isFinite(open)&&open!==0?((close-open)/open*100):null;
+ return {price:close,pct:pct,meta:"Cao ngày: "+o.High+" · Thấp ngày: "+o.Low+" · "+(o.Date||"")+" "+(o.Time||"")+"<br>Nguồn: Stooq ("+symLabel+", % thay đổi tính so với giá mở cửa) · Cập nhật: "+nowStr()};
+}
+function loadStooq(sym){
+ var base="https://stooq.com/q/l/?s="+encodeURIComponent(sym)+"&f=sd2t2ohlcv&h&e=csv";
+ return tryUrls(proxied(base),function(u){return fetchText(u);}).then(function(t){return parseStooq(t,sym);});
+}
+
+function loadIndex(cfg){
+ var attempts=[
+  function(){return loadYahoo(cfg.yahoo,cfg.name);},
+  function(){return loadStooq(cfg.stooq);},
+  function(){return loadYahoo(cfg.etf,cfg.name+" qua ETF "+cfg.etf);},
+  function(){return loadStooq(cfg.etf.toLowerCase()+".us");}
+ ];
+ var p=Promise.reject(new Error("start"));
+ attempts.forEach(function(fn){p=p.catch(fn);});
+ return p.then(function(res){
+  state.idx++;
+  var note=(res.meta.indexOf(cfg.etf)>=0||res.meta.indexOf("ETF")>=0)?" (qua ETF "+cfg.etf+")":"";
+  setCard(cfg.id,fmt(res.price,2),res.pct,res.meta+note);
+ }).catch(function(){/* giữ nguyên ảnh chụp đóng cửa 23/11 đã ghi sẵn trong thẻ */});
+}
+var INDICES=[
+ {id:"card-spx",name:"S&P 500",yahoo:"^GSPC",stooq:"^spx",etf:"SPY"},
+ {id:"card-nasdaq",name:"Nasdaq",yahoo:"^IXIC",stooq:"^ndq",etf:"QQQ"},
+ {id:"card-dow",name:"Dow Jones",yahoo:"^DJI",stooq:"^dji",etf:"DIA"}
+];
+function refreshBTC(){return loadBTC().then(status).catch(status);}
+function refreshIndices(){state.idx=0;return Promise.all(INDICES.map(loadIndex)).then(status).catch(status);}
+function refreshAll(){return Promise.all([refreshBTC(),refreshIndices()]);}
+var BTC_MS=20000,nextAt=Date.now()+BTC_MS;
+$("refreshbtn").addEventListener("click",function(){refreshAll();nextAt=Date.now()+BTC_MS;});
+refreshAll();
+setInterval(function(){refreshBTC();nextAt=Date.now()+BTC_MS;},BTC_MS);
+setInterval(refreshIndices,60000);
+setInterval(function(){
+ var s=Math.max(0,Math.round((nextAt-Date.now())/1000));
+ $("nextupdate").textContent="Tự làm mới sau: "+s+" giây";
+},1000);
+})();
+/* Nut len dau trang: hien khi cuon xuong qua 300px */
+function toTopInit(){
+var toTopBtn=document.getElementById("toTopBtn");
+if(!toTopBtn)return;
+function toTopShow(){toTopBtn.style.display=(window.scrollY>300)?"flex":"none";}
+window.addEventListener("scroll",toTopShow,{passive:true});
+toTopShow();
+}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",toTopInit);}else{toTopInit();}
+</script>
+
+<script>
+(function(){
+var list=document.getElementById("archive-list");
+if(!list) return;
+var items=list.querySelectorAll("li");
+var per=3, page=0, pages=Math.max(1,Math.ceil(items.length/per));
+var prev=document.getElementById("archive-prev"),
+    next=document.getElementById("archive-next"),
+    info=document.getElementById("archive-pageinfo"),
+    pager=document.getElementById("archive-pager");
+function show(n){
+  page=Math.max(0,Math.min(n,pages-1));
+  items.forEach(function(li,i){li.style.display=(i>=page*per && i<(page+1)*per)?"":"none";});
+  if(info) info.textContent="Trang "+(page+1)+" / "+pages;
+  if(prev) prev.disabled=(page===0);
+  if(next) next.disabled=(page===pages-1);
+  if(pager) pager.style.display=(pages<=1)?"none":"flex";
+}
+if(prev) prev.addEventListener("click",function(){show(page-1);});
+if(next) next.addEventListener("click",function(){show(page+1);});
+show(0);
+})();
+</script>
+<button id="toTopBtn" type="button" title="Lên đầu trang" aria-label="Lên đầu trang" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="display:none;position:fixed;right:16px;bottom:16px;width:48px;height:48px;border:1px solid #d8d8d8;border-radius:12px;background:#ffffff;box-shadow:0 2px 12px rgba(0,0,0,.2);color:#333;font-size:24px;line-height:1;cursor:pointer;z-index:9999;align-items:center;justify-content:center">↑</button>
+</body>
+</html>
