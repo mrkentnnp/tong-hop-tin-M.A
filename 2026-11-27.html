@@ -1,0 +1,395 @@
+<!doctype html>
+<!--
+  TỔNG HỢP TIN — BẢN LIVE (1 file duy nhất, tên trên GitHub: index.html)
+  Giá live cần có mạng khi mở trang: BTC lấy từ Binance, chỉ số Mỹ lấy từ Stooq/Yahoo (miễn phí, có thể trễ ~15 phút).
+  Mở offline vẫn đọc được phần tin và giá ảnh chụp đóng cửa phiên 25/11/2026 (Mỹ nghỉ Lễ Tạ ơn 26/11).
+-->
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Tổng hợp tin</title>
+<style>
+:root{--bg:#f6f3ec;--surface:#fffdf8;--surface2:#efe9db;--ink:#1d2733;--soft:#4c5a68;--faint:#7c8a97;--line:#ddd5c3;--accent:#b4551f;--accent-soft:#f7e3d3;--teal:#14635d;--teal-soft:#dcebe7;--up:#177245;--down:#b3372e;--warn-bg:#fdf0dc;--warn-line:#e3b96a;--warn-ink:#6d4a08;--radius:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#131a21;--surface:#1c262f;--surface2:#232f3a;--ink:#eef2f4;--soft:#b3c0ca;--faint:#8696a2;--line:#33424e;--accent:#e08a4c;--accent-soft:#3a2a1c;--teal:#4db3a8;--teal-soft:#1e3533;--up:#4cc984;--down:#e87a70;--warn-bg:#35290f;--warn-line:#8a6a25;--warn-ink:#f0cd82}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
+.dateline{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,5.4vw,46px);line-height:1.12;margin:8px 0 10px}
+.navmenu{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+.navmenu a{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:var(--soft);background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 22px;transition:all .15s ease}
+.navmenu a:hover{border-color:var(--accent);color:var(--accent)}
+.navmenu a.active{color:#fff;background:linear-gradient(135deg,#b4551f,#d97b2e);border-color:#b4551f;box-shadow:0 4px 14px rgba(180,85,31,.35)}
+.navmenu a.teal.active{background:linear-gradient(135deg,#14635d,#2a8a7f);border-color:#14635d;box-shadow:0 4px 14px rgba(20,99,93,.35)}
+.bottom-note{color:var(--faint);font-size:13.5px;line-height:1.55;max-width:72ch;margin:22px auto 0;text-align:center;border-top:1px solid var(--line);padding-top:16px}
+.livebar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13.5px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--up);display:inline-block;margin-right:6px;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+.dot.err{background:var(--down);animation:none}.dot.wait{background:#d98a2b;animation:none}
+button.refresh{margin-left:auto;border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer;font-size:13.5px}
+button.refresh:active{transform:scale(.97)}
+.prices{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+@media(max-width:860px){.prices{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.prices{grid-template-columns:1fr}}
+.price{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.price .name{font-size:13px;font-weight:700;color:var(--soft);display:flex;justify-content:space-between;gap:8px}
+.price .sym{color:var(--faint);font-weight:600;font-size:12px}
+.price .val{font-size:clamp(24px,3.4vw,30px);font-weight:800;font-variant-numeric:tabular-nums;margin-top:4px}
+.price .chg{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.price .meta{font-size:12.5px;color:var(--faint);margin-top:8px;line-height:1.5}
+.up{color:var(--up)}.down{color:var(--down)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.grid .wide{grid-column:1/-1}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.card.featured{border:2px solid var(--accent);box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.card.featured h2{font-size:26px}
+.card.featured .news .h{font-size:16.5px}
+.card.featured .news li{padding:14px 0}
+.card h2{font-family:Georgia,serif;font-size:21px;margin:0 0 4px;font-weight:600}
+.card h2 .tag{font-family:system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--teal-soft);color:var(--teal);white-space:nowrap;vertical-align:middle}
+.card h2 .tag.hot{background:var(--accent-soft);color:var(--accent)}
+.card .sub{color:var(--faint);font-size:13.5px;margin:0 0 14px}.card p{margin:0 0 10px}.card p:last-child{margin-bottom:0}
+.small{font-size:14px;color:var(--soft)}.fineprint{font-size:12.5px;color:var(--faint);margin-top:12px}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14.5px}.kv:last-child{border-bottom:none}.kv .k{color:var(--soft)}.kv .v{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.alert{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--radius);padding:20px 22px}.alert h2{font-family:Georgia,serif;font-size:21px;margin:0 0 6px;color:var(--warn-ink)}.alert p{margin:0 0 10px}.alert .nums{display:flex;flex-wrap:wrap;gap:8px 22px;margin:12px 0;font-size:14px}.alert .nums b{font-size:19px}
+.news{list-style:none;margin:0;padding:0}.news li{padding:12px 0;border-bottom:1px solid var(--line)}.news li:first-child{padding-top:2px}.news li:last-child{border-bottom:none;padding-bottom:0}.news .h{font-weight:700;font-size:15.5px;margin-bottom:2px}.news p{margin:0;font-size:14.5px;color:var(--soft)}
+.ahead{list-style:none;margin:0;padding:0}.ahead li{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line)}.ahead li:last-child{border-bottom:none}.ahead .when{flex:0 0 86px;font-weight:800;font-size:13.5px;color:var(--accent);padding-top:2px}.ahead .what{font-size:15px}.ahead .what span{display:block;color:var(--soft);font-size:14px}
+.meter{margin-top:14px}.meter .track{height:10px;border-radius:999px;background:linear-gradient(90deg,#b3372e,#d98a2b 45%,#4d9e57);position:relative}.meter .pin{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translate(-50%,-50%)}.meter .labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:6px}
+footer{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
+
+.pager{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}
+.pager button{font:inherit;font-size:14px;font-weight:700;padding:7px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:default}
+.pager span{font-size:14px;color:var(--faint)}
+.dateline a{color:inherit;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="dateline" id="dateline"><a href="/" id="dateline-link">Thứ Sáu 27/11/2026</a></div>
+<h1>Tổng hợp tin</h1>
+<nav class="navmenu" aria-label="Chuyên mục">
+<a href="/" class="active">Tổng hợp</a>
+<a href="/thoi-su.html" class="teal">Thời sự</a>
+</nav>
+<div class="livebar" role="status">
+<span><span class="dot wait" id="livedot"></span><b id="livestatus">Đang kết nối lấy giá…</b></span>
+<span id="lastupdate">Lần cập nhật giá: —</span>
+<span id="nextupdate"></span>
+<button class="refresh" id="refreshbtn" type="button">↻ Cập nhật ngay</button>
+</div>
+</header>
+
+<main>
+<section class="prices" aria-label="Giá trực tiếp">
+<article class="price" id="card-btc">
+<div class="name"><span>Bitcoin</span><span class="sym">BTC / USDT · Binance</span></div>
+<div class="val" data-field="price">≈ 60.631 USD</div>
+<div class="chg" data-field="chg">—</div>
+<div class="meta" data-field="meta">Ảnh chụp sáng 27/11: quanh 60.631 USD (07:22 giờ VN, Finnhub/Binance) — 24h: cao ~61.126 USD, thấp ~59.915 USD.<br>Đang chờ giá live…</div>
+</article>
+<article class="price" id="card-spx">
+<div class="name"><span>S&amp;P 500</span><span class="sym">^SPX · dự phòng SPY</span></div>
+<div class="val" data-field="price">7.182,78</div>
+<div class="chg down" data-field="chg">−0,25% <span style="font-weight:500;color:var(--faint)">(đóng cửa 25/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 25/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+<article class="price" id="card-nasdaq">
+<div class="name"><span>Nasdaq</span><span class="sym">^IXIC · dự phòng QQQ</span></div>
+<div class="val" data-field="price">23.585,80</div>
+<div class="chg down" data-field="chg">−0,62% <span style="font-weight:500;color:var(--faint)">(đóng cửa 25/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 25/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+<article class="price" id="card-dow">
+<div class="name"><span>Dow Jones</span><span class="sym">^DJI · dự phòng DIA</span></div>
+<div class="val" data-field="price">50.182,95</div>
+<div class="chg up" data-field="chg">+0,33% <span style="font-weight:500;color:var(--faint)">(đóng cửa 25/11)</span></div>
+<div class="meta" data-field="meta">Ảnh chụp đóng cửa phiên 25/11. Đang chờ giá live…<br>Nguồn miễn phí thường trễ khoảng 15 phút.</div>
+</article>
+</section>
+<p class="fineprint">Cách đọc: khi lấy được giá live, mỗi ô sẽ ghi rõ <b>nguồn</b> và <b>giờ cập nhật</b>. Nếu ghi “ảnh chụp đóng cửa 25/11” thì đó <b>không phải</b> giá live. Bitcoin tự làm mới mỗi 20 giây; chứng khoán Mỹ mỗi 60 giây (ngoài giờ giao dịch Mỹ, giá đứng ở mức đóng cửa gần nhất). Đây là thông tin thị trường, không phải lời khuyên đầu tư.</p>
+
+<div class="grid">
+<section class="card wide featured">
+<h2>Tin đáng chú ý sáng 27/11 <span class="tag hot">Nổi bật</span></h2>
+<p class="sub">Những diễn biến lớn đang mở, chưa có hồi kết — tổng hợp đến sáng 27/11/2026. Bản này đính chính hai thông tin ở bản 26/11 (thuế Mỹ với Việt Nam và ngày tham quan cống ngăn triều).</p>
+<ul class="news">
+<li><div class="h">Đính chính thuế Mỹ: Việt Nam bị đề xuất tối đa 35%, mức 20% chỉ khi đạt hiệp định đối ứng — VN-Index rơi 57,77 điểm phiên 26/11</div><p>Văn phòng Đại diện Thương mại Mỹ (USTR) ngày 25/11 đề xuất thuế theo Điều 301 với 14 nền kinh tế — Trung Quốc, EU, Singapore, Thụy Sĩ, Indonesia, Malaysia, Campuchia, Thái Lan, Hàn Quốc, Việt Nam, Đài Loan, Bangladesh, Nhật Bản và Ấn Độ — về “dư thừa công suất cấu trúc”; Mexico và Na Uy chưa bị kết luận. <b>Đính chính bản 26/11:</b> với Việt Nam, văn bản USTR đề xuất cân nhắc thuế <b>tối đa 35%</b> (đã trừ thuế Điều 301 hiện hành, có miễn trừ một số mặt hàng), và chỉ cân nhắc mức <b>20% nếu Việt Nam đạt Hiệp định Thương mại Đối ứng</b> đáp ứng kết luận điều tra — không phải mức 20% cố định như bản hôm qua đã viết. Bộ Công Thương chiều 26/11 xác nhận cách đọc này, cho biết đề xuất miễn trừ 2.121 mặt hàng theo mã HS 8 số; đây mới là đề xuất, chưa có hiệu lực. Hạn gửi ý kiến 5/1/2027, điều trần bắt đầu 25/1/2027, quyết định cuối cùng sớm nhất tháng 2/2027 và muộn nhất 11/3/2027. Tin thuế khiến VN-Index phiên 26/11 giảm 57,77 điểm (−3,42%) còn 1.629,68 điểm, mức giảm mạnh nhất trong hơn 4 tháng; riêng VIC lấy đi gần 25 điểm.</p></li>
+<li><div class="h">Phố Wall nghỉ Lễ Tạ ơn 26/11, mở lại phiên rút ngắn hôm nay; futures sáng nay tăng khoảng 0,4–0,8%</div><p>Thị trường Mỹ đóng cửa cả ngày thứ Năm 26/11 (Lễ Tạ ơn), hôm nay thứ Sáu 27/11 mở cửa và đóng sớm lúc 13:00 giờ miền Đông. Đóng cửa gần nhất vẫn là phiên 25/11: Dow 50.182,95 điểm (+0,33%), S&amp;P 500 7.182,78 điểm (−0,25%), Nasdaq 23.585,80 điểm (−0,62%) — không có đính chính. Futures qua đêm tăng trong phiên mỏng dịp lễ, khoảng +0,4% đến +0,8% tùy thời điểm chụp (Dow futures có lúc +303 điểm). Sau số PCE lõi 3,3% và GDP 4,3% công bố 25/11, CME FedWatch định giá xác suất Fed tăng lãi suất 0,25 điểm ngày 9/12 ở khoảng 94–98% tùy thời điểm chụp, đưa lãi suất lên 4,00–4,25%. Mốc tiếp theo: báo cáo việc làm 4/12, quyết định Fed 9/12, CPI tháng 11 ngày 10/12.</p></li>
+<li><div class="h">Bitcoin quanh 60.631 USD sáng nay; ETF bị rút ròng kỷ lục tháng 11, đáo hạn quyền chọn lớn chiều nay</div><p>Bitcoin sáng nay quanh 60.631 USD (07:22 giờ VN, Finnhub/Binance), trong 24 giờ cao nhất khoảng 61.126 USD, thấp nhất khoảng 59.915 USD; các ảnh chụp khác cùng buổi sáng cho khoảng 60.550–60.590 USD tùy sàn và thời điểm. Theo Finnhub, BTC giảm khoảng 25% trong 1 tháng và khoảng 31,7% từ đầu năm. ETF Bitcoin giao ngay tại Mỹ bị rút ròng khoảng 5,39 tỷ USD trong tháng 11 tính đến 25/11 (SoSoValue), riêng phiên 25/11 rút 453,12 triệu USD. Chiều nay 15:00 giờ VN, quyền chọn Bitcoin trên Deribit đáo hạn tháng với giá trị danh nghĩa khoảng 6,83 tỷ USD; giá “max pain” được ghi nhận khoảng 70.000–71.000 USD tùy thời điểm. Strategy nắm 851.305 BTC với giá vốn trung bình 75.446 USD, cao hơn giá thị trường khoảng 20%; cổ phiếu sẽ rời các chỉ số MSCI sau phiên 30/11. Vàng thế giới sáng nay quanh 3.567–3.581 USD/oz; vàng miếng SJC 129,5–134,5 triệu đồng/lượng, tăng 0,4 triệu đồng.</p></li>
+<li><div class="h">Iran tuyên bố thêm 2 tàu dầu trúng mìn ở Hormuz ngày 26/11 (chưa kiểm chứng độc lập); dầu Brent lên 96,57 USD</div><p>Vệ binh Cách mạng Iran tuyên bố thứ Năm 26/11 có hai tàu chở dầu phát nổ, bốc cháy sau khi trúng mìn phía bắc cảng Khasab của Oman — tuyên bố này chưa được kiểm chứng độc lập đầy đủ, chưa nêu tên tàu và chưa có cảnh báo khớp từ UKMTO tại thời điểm đưa tin. Riêng UKMTO đã xác nhận một tàu chở dầu bị vật thể lạ bắn trúng cách Khasab 18 hải lý về phía đông lúc 13:00 giờ Anh ngày 25/11. Ngoại trưởng Iran Abbas Araghchi nói Qatar và Pakistan vẫn tiếp tục trung gian, nhưng lập trường của Tehran không đổi: eo biển chỉ mở lại sau khi các yêu cầu của Iran được thực hiện, gồm dỡ phong tỏa hàng hải, gỡ trừng phạt đơn phương và chấm dứt chiến tranh. Dầu Brent đóng cửa thứ Năm ở 96,57 USD/thùng (+1,2%); WTI trong phiên mỏng ở 84,84 USD/thùng. OPEC+ họp Chủ Nhật 29/11, nhiều khả năng giữ nguyên mục tiêu sản lượng ít nhất đến quý 1/2027 nhưng chưa có quyết định.</p></li>
+<li><div class="h">Đính chính cống ngăn triều: chỉ mở tham quan 2 ngày 27–28/11, phải đăng ký trước, tối đa 1.000 người</div><p><b>Đính chính bản 26/11:</b> thông báo chính thức của nhà đầu tư ngày 26/11 chốt đợt tham quan hệ thống ngăn triều TP.HCM chỉ trong 2 ngày <b>27 và 28/11</b> (không phải 26–28/11 như kế hoạch sơ bộ bản hôm qua đã nêu), có đăng ký trực tuyến và giới hạn 1.000 người trong 2 ngày, mỗi lượt 60 phút, chỉ dành cho người từ đủ 18 tuổi mang theo CCCD. Chỉ mở 3 cống: Bến Nghé và Tân Thuận (buổi sáng 8h–12h, tối đa 25 người/khung giờ), Mương Chuối (8h–11h và 13h–16h, tối đa 50 người/khung giờ). Đăng ký tại forms.gle/HFtM9xYrZctwSHfq8, form đóng khi đủ số; các nguồn đã đọc không nêu điểm tập trung cụ thể. Rạng sáng 26/11, sau khi ngừng vận hành thử, một số tuyến như Chánh Hưng, Nguyễn Bình, Lê Văn Lương và Trần Xuân Soạn ngập trở lại khi triều đạt đỉnh. Dự báo 27/11 mực nước tại Phú An và Nhà Bè ở mức xấp xỉ hoặc trên báo động I, duy trì đến hết 28/11; chưa có số mét dự báo cụ thể riêng cho 27/11 trong các nguồn đã đọc. Sau đợt tham quan, 29–30/11 diễn tập vận hành, khánh thành dự kiến trong tháng 12.</p></li>
+<li><div class="h">Công điện khẩn ứng phó mưa lũ Nam Trung Bộ: dự báo 27–30/11 mưa 200–400mm, cục bộ trên 600mm</div><p>Phó Thủ tướng Hồ Quốc Dũng đã ký Công điện 76/CĐ-TTg ngày 26/11 yêu cầu ứng phó mưa lũ ở Nam Trung Bộ – Tây Nguyên. Mưa 24 giờ qua phổ biến 100–250mm, Lý Sơn 404mm, khu vực Trà Khúc – Quảng Ngãi 380–400mm; sáng 26/11 Quảng Ngãi ngập nhiều nơi, một số trường cho học sinh nghỉ học, xuất hiện sạt lở đường liên thôn. Dự báo từ 27–30/11, khu vực từ Huế đến Đà Nẵng, phía Đông Quảng Ngãi đến Đắk Lắk và Khánh Hòa có mưa lớn diện rộng 200–400mm, cục bộ trên 600mm, nguy cơ ngập úng, lũ quét và sạt lở. Chưa có cơ sở xác nhận cơn bão hoặc áp thấp mới trên Biển Đông trong các nguồn chính thống đã đọc. Tại TP.HCM hôm nay, trời có mây, ngày nắng, chiều tối có mưa rào, nhiệt độ thấp nhất 26–28°C, cao nhất khoảng 33–35°C.</p></li>
+</ul>
+</section>
+
+<section class="card wide">
+<h2>Fed: PCE lõi 3,3% và GDP 4,3% — đợt tăng 0,25 điểm tháng 12 được định giá khoảng 94–98%</h2>
+<p class="sub">Lạm phát nóng nhất từ tháng 11/2023, tăng trưởng nhanh nhất trong 3 năm; thị trường nghỉ Lễ Tạ ơn 26/11, mở lại phiên rút ngắn hôm nay.</p>
+<div class="kv"><span class="k">PCE / GDP 25/11 (đã có)</span><span class="v">PCE lõi tháng 10: +0,3% theo tháng, +3,3% theo năm (kỳ vọng +3,2%; tháng 9: +3,1%) — cao nhất từ tháng 11/2023 · PCE toàn phần: +0,3% theo tháng, +3,8% theo năm (đúng kỳ vọng) · GDP quý 3 ước tính lần 2: +4,3% quy năm (kỳ vọng 3,5%; ước tính đầu 3,4%) — nhanh nhất trong 3 năm (BEA) · lưu ý: PCE năm của tháng 10 dùng nền ước tính do chính phủ đóng cửa, số lõi theo tháng là thước đo sạch hơn</span></div>
+<div class="kv"><span class="k">Đóng cửa 25/11 (gần nhất)</span><span class="v">Dow +0,33% lên 50.182,95 sau khi có lúc mất hơn 1.100 điểm · S&amp;P 500 −0,25% còn 7.182,78 · Nasdaq −0,62% còn 23.585,80 sau khi có lúc −4,64% · Russell 2000 +0,71% · VIX 28,29 · thị trường đóng cửa 26/11 (Lễ Tạ ơn), đóng sớm 13:00 giờ miền Đông hôm nay 27/11 · futures sáng 27/11 tăng khoảng 0,4–0,8% trong phiên mỏng</span></div>
+<div class="kv"><span class="k">Việc làm / đặt hàng 25/11 (đã có)</span><span class="v">số đơn xin trợ cấp thất nghiệp lần đầu giảm 13.000 còn 189.000 (kỳ vọng 200.000) · đơn đặt hàng bền lâu tháng 10 chỉ +0,2% (kỳ vọng +0,5%) · doanh số nhà mới 701.000 căn quy năm (kỳ vọng 645.000)</span></div>
+<div class="kv"><span class="k">Sách Beige 25/11 (đã có)</span><span class="v">8/12 khu vực tăng trưởng nhẹ đến vừa phải, 4 khu vực không đổi · giá tăng vừa phải, lương tăng nhanh hơn kỳ trước · chi phí đầu vào tăng nhanh hơn giá bán (số liệu thu thập đến 16/11)</span></div>
+<div class="kv"><span class="k">Thuế quan mới (đính chính)</span><span class="v">USTR đề xuất thuế Điều 301 với 14 nền kinh tế về “dư thừa công suất cấu trúc”: Việt Nam <b>tối đa 35%</b> (đã trừ thuế Điều 301 hiện hành), chỉ cân nhắc <b>20% nếu đạt Hiệp định Thương mại Đối ứng</b> · đề xuất miễn trừ 2.121 mặt hàng HS 8 số · mới là đề xuất, chưa có hiệu lực · hạn gửi ý kiến 5/1/2027, điều trần từ 25/1/2027, quyết định cuối cùng sớm nhất tháng 2/2027, muộn nhất 11/3/2027 (Bộ Công Thương)</span></div>
+<div class="kv"><span class="k">Xác suất tháng 12</span><span class="v">đợt tăng +0,25 điểm ngày 9/12 được định giá khoảng 94–98% tùy thời điểm chụp CME FedWatch (94,4% lúc 16:01 UTC ngày 25/11) — đưa lãi suất lên 4,00–4,25% · không có diễn giả Fed nào được lên lịch ngày 26/11 (nghỉ lễ)</span></div>
+<div class="kv"><span class="k">Sắp tới</span><span class="v">báo cáo việc làm 4/12 · quyết định Fed 8–9/12 kèm dự báo kinh tế mới · CPI tháng 11 công bố 10/12, ngay sau quyết định một ngày · PCE tiếp theo 23/12</span></div>
+<p class="small" style="margin-top:10px">Tăng trưởng và lạm phát cùng nóng cho Fed thêm lý do thắt chặt, nặng nhất lên cổ phiếu định giá cao — nhưng cú gỡ gần hết trong phiên 25/11 cho thấy lực mua vẫn còn khi giá rơi sâu.</p>
+</section>
+
+<section class="card wide">
+<h2>Nga – Ukraine: Abu Dhabi kết thúc không đột phá về lãnh thổ, đặc phái viên Mỹ đi Moscow rồi Dublin</h2>
+<p class="sub">Hai bên đồng ý về nguyên tắc trao đổi tù binh; vấn đề lãnh thổ vẫn bế tắc, Moscow giữ yêu sách tối đa.</p>
+<div class="kv"><span class="k">Abu Dhabi (kết thúc 25/11)</span><span class="v">đàm phán ba bên Mỹ – Ukraine – Nga kết thúc không có đột phá lớn về ngừng bắn hay lãnh thổ; hai bên đồng ý về nguyên tắc trao đổi tù binh · đặc phái viên Mỹ Jared Kushner nói vấn đề lãnh thổ “hiện đang bế tắc” và muốn thử đàm phán thỏa thuận hậu chiến trước · trưởng đoàn Nga Vladimir Medinsky giữ lập trường không nhượng bộ, yêu cầu Ukraine rút khỏi phần còn lại của Donbas</span></div>
+<div class="kv"><span class="k">Đặc phái viên di chuyển</span><span class="v">Kushner và Steve Witkoff dự kiến tới Moscow báo cáo với Tổng thống Putin, sau đó tới Dublin gặp Tổng thống Zelensky bên lề cuộc gặp không chính thức của châu Âu · Ngoại trưởng Sergei Lavrov bác yêu cầu ngừng bắn ngay của châu Âu; Moscow nhắc lại yêu cầu NATO rút lực lượng về vị trí năm 1997</span></div>
+<div class="kv"><span class="k">Giao tranh</span><span class="v">tên lửa và drone Nga tiếp tục đánh vào hạ tầng năng lượng Ukraine qua đêm, hàng trăm nghìn người ở Dnipropetrovsk và Kharkiv mất điện khi mùa đông đến gần</span></div>
+<div class="kv"><span class="k">Lưu ý nguồn</span><span class="v">chi tiết diễn biến ngày 26/11 chủ yếu qua nguồn thứ cấp tổng hợp lại, chưa có bản tin gốc riêng cho ngày 26/11 trong lượt tra cứu này; các con số thương vong lan truyền trên mạng chưa được kiểm chứng nên không đăng như sự thật đã chốt</span></div>
+</section>
+
+<section class="card">
+<h2>Spotlight: Anthropic hồi lên 82,79 USD phiên 25/11 — vẫn dưới giá IPO 83 USD <span class="tag">ANT</span></h2>
+<p class="sub">Câu chuyện nổi bật ngoài các chủ đề thường ngày. Thị trường Mỹ nghỉ 26/11 nên chưa có phiên mới.</p>
+<div class="kv"><span class="k">Phiên 25/11 (gần nhất)</span><span class="v">đóng cửa 82,79 USD, tăng 1,08% — phiên tăng đầu tiên sau 4 phiên giảm, nhưng vẫn thấp hơn giá IPO 83 USD đúng 21 cent · trong phiên có lúc xuống 73,85 USD (−10%), vốn hóa có lúc thủng 1 nghìn tỷ USD · sau giờ lên 84,40 USD (+1,94%) · vốn hóa khoảng 1,16 nghìn tỷ USD, từ mức 1,5 nghìn tỷ lúc chào bán</span></div>
+<div class="kv"><span class="k">Phiên 24/11 (đã có)</span><span class="v">đóng cửa 81,91 USD, giảm 6,54% — lần đầu dưới giá IPO 83 USD · CEO Dario Amodei bán hơn 3,37 triệu cổ phiếu, trị giá hơn 280 triệu USD, ngay ngày sau khi lên sàn (hồ sơ công bố thứ Hai)</span></div>
+<div class="kv"><span class="k">Ngày đầu 19/11 (đã có)</span><span class="v">mở 111,50 USD (+34% so với giá IPO 83 USD) · cao 115,10 USD · đóng cửa 97,17 USD (+17,07%) — từ đỉnh ngày đầu đến nay đã giảm khoảng 28%</span></div>
+<div class="kv"><span class="k">Quy mô</span><span class="v">bán 980 triệu cổ phiếu loại A ở 83 USD, huy động khoảng 81,3 tỷ USD — IPO lớn nhất từ trước đến nay, vượt SpaceX (75 tỷ USD) · đợt chào bán hoàn tất 20/11</span></div>
+<p class="small" style="margin-top:10px">Anthropic là hãng phát triển mô hình AI hàng đầu đầu tiên lên sàn; OpenAI vẫn chưa niêm yết. Phiên hôm nay 27/11 là phiên rút ngắn Black Friday trong thanh khoản mỏng.</p>
+</section>
+
+<section class="card">
+<h2>Crypto &amp; tâm lý thị trường <span class="tag">Sáng 27/11</span></h2>
+<p class="sub">Ngoài giá BTC live ở trên, đây là bức tranh dòng tiền lúc sáng 27/11.</p>
+<div class="kv"><span class="k">BTC sáng 27/11</span><span class="v">quanh 60.631 USD (07:22 giờ VN, Finnhub/Binance) · 24h: cao ~61.126 USD · thấp ~59.915 USD · các ảnh chụp khác cho khoảng 60.550–60.590 USD tùy sàn và thời điểm · 1 tháng giảm khoảng 25%, từ đầu năm giảm khoảng 31,7% (Finnhub)</span></div>
+<div class="kv"><span class="k">ETF / tâm lý</span><span class="v">ETF Bitcoin giao ngay tại Mỹ bị rút ròng khoảng 5,39 tỷ USD trong tháng 11 tính đến 25/11 (SoSoValue), rút ròng 16/18 phiên; riêng 25/11 rút 453,12 triệu USD, trong đó IBIT rút 329,71 triệu USD · chỉ số sợ hãi 11 điểm “Extreme Fear” ngày 26/11</span></div>
+<div class="kv"><span class="k">Đáo hạn hôm nay</span><span class="v">quyền chọn Bitcoin trên Deribit đáo hạn tháng lúc 15:00 giờ VN hôm nay 27/11, khối lượng mở khoảng 112.794 BTC, giá trị danh nghĩa khoảng 6,83 tỷ USD · giá “max pain” khoảng 70.000–71.000 USD tùy thời điểm ghi nhận</span></div>
+<div class="kv"><span class="k">Strategy</span><span class="v">nắm 851.305 BTC, giá vốn trung bình 75.446 USD — BTC đang thấp hơn khoảng 20% so với giá vốn · cổ phiếu giao dịch ở mức chiết khấu kỷ lục 0,88 lần giá trị Bitcoin nắm giữ (JPMorgan) · sẽ rời các chỉ số MSCI sau phiên 30/11</span></div>
+<p class="small" style="margin-top:10px">Giá biến động nhanh — ô giá live ở trên là số mới nhất. Đây là thông tin thị trường, không phải lời khuyên đầu tư.</p>
+</section>
+
+
+
+<section class="card">
+<h2>Chứng khoán Mỹ — đóng cửa gần nhất phiên 25/11 <span class="tag">Ảnh chụp</span></h2>
+<p class="sub">Thị trường đóng cửa 26/11 (Lễ Tạ ơn); hôm nay 27/11 mở lại và đóng sớm 13:00 giờ miền Đông.</p>
+<div class="kv"><span class="k">Dow Jones</span><span class="v">50.182,95 · +0,33% · +164 điểm — có lúc mất hơn 1.100 điểm trong phiên rồi đảo chiều tăng · phiên thứ hai liên tiếp đóng cửa trên 50.000 điểm</span></div>
+<div class="kv"><span class="k">S&amp;P 500</span><span class="v">7.182,78 · −0,25% · −18 điểm · có lúc xuống 6.969,93 điểm (−3,21%)</span></div>
+<div class="kv"><span class="k">Nasdaq</span><span class="v">23.585,80 · −0,62% · −148 điểm — có lúc −4,64% (mất khoảng 1.101 điểm) rồi gỡ lại hơn 950 điểm</span></div>
+<div class="kv"><span class="k">Futures sáng 27/11</span><span class="v">tăng khoảng 0,4–0,8% tùy thời điểm chụp trong phiên mỏng dịp lễ (Dow futures có lúc +303 điểm, S&amp;P 500 futures +0,6–0,8%, Nasdaq 100 futures +0,5–0,7%) — chưa phải giá mở cửa chính thức</span></div>
+<div class="kv"><span class="k">Vàng / dầu</span><span class="v">Vàng thế giới quanh 3.567–3.581 USD/oz sáng 27/11 · Dầu Brent 96,57 USD/thùng (+1,2%) đóng cửa thứ Năm · WTI 84,84 USD/thùng trong phiên mỏng · lợi suất trái phiếu Mỹ kỳ hạn 10 năm quanh 4,80–4,87%, chỉ số USD (DXY) quanh 103,7</span></div>
+<p class="small" style="margin-top:10px">Cú rơi đầu phiên 25/11 do PCE lõi 3,3% và GDP 4,3% cùng nóng, cộng thêm đề xuất thuế mới với 14 đối tác; cú hồi cuối phiên giữ S&amp;P 500 trên 7.000 điểm.</p>
+</section>
+
+
+
+
+<section class="card">
+<h2>Chứng khoán Việt Nam — phiên 26/11 <span class="tag">VN-Index</span></h2>
+<p class="sub">Phiên giảm mạnh nhất trong hơn 4 tháng sau đề xuất thuế Điều 301 của Mỹ; khối ngoại thu hẹp bán ròng.</p>
+<div class="kv"><span class="k">VN-Index</span><span class="v">1.629,68 · −57,77 điểm (−3,42%) · đóng cửa ở mức thấp nhất ngày, mất mốc 1.650 · sắc đỏ áp đảo: khoảng 273–291 mã giảm so với 40–47 mã tăng tùy nguồn thống kê, 18 mã giảm sàn (số độ rộng khác nhau giữa các nguồn, chưa đối chiếu trực tiếp HOSE)</span></div>
+<div class="kv"><span class="k">VN30 / HNX / UPCoM</span><span class="v">VN30 1.728,88 · −49,70 điểm (−2,79%), 27 mã giảm · HNX-Index 226,57 · −0,89 điểm (−0,39%), giảm 9 phiên liên tiếp · UPCoM-Index 118,44 · −1,38 điểm (−1,15%)</span></div>
+<div class="kv"><span class="k">Khối ngoại</span><span class="v">HOSE bán ròng khoảng 180–187,5 tỷ đồng (tùy nguồn), thu hẹp mạnh so với mức kỷ lục khoảng 5.600–5.700 tỷ đồng phiên 25/11 · cả 3 sàn bán ròng khoảng 139–142 tỷ đồng · bán mạnh nhất VIC khoảng 191 tỷ đồng; riêng VIC lấy đi gần 25 điểm của VN-Index</span></div>
+<div class="kv"><span class="k">Thanh khoản</span><span class="v">HOSE hơn 16.000 tỷ đồng, khớp lệnh gần 13.500 tỷ đồng với hơn 691 triệu cổ phiếu khớp lệnh</span></div>
+<div class="kv"><span class="k">Nhìn trước</span><span class="v">phiên hôm nay 27/11 mở cửa lúc 9:00 · vàng miếng SJC sáng nay 129,5–134,5 triệu đồng/lượng, tăng 0,4 triệu đồng · vàng nhẫn SJC 128,3–134,3 triệu đồng/lượng · Bộ Công Thương khuyến cáo doanh nghiệp xuất khẩu chủ động, bình tĩnh, đa dạng hóa thị trường và chuẩn bị tham dự điều trần 25/1/2027</span></div>
+<p class="small" style="margin-top:10px">Đề xuất thuế tối đa 35% (chỉ còn 20% nếu đạt hiệp định đối ứng) là yếu tố tâm lý chính kéo thị trường xuống; mức cuối cùng có thể thấp hơn nếu đàm phán có tiến triển, quyết định sớm nhất tháng 2/2027.</p>
+</section>
+
+<section class="card">
+<h2>Tuần này nhìn trước</h2>
+<p class="sub">Năm mốc đáng ghim lịch.</p>
+<ul class="ahead">
+<li><span class="when">Hôm nay 27/11</span><div class="what">Phố Wall mở lại phiên rút ngắn; TP.HCM mở tham quan cống ngăn triều (phải đăng ký)<span>Chứng khoán Mỹ đóng sớm 13:00 giờ miền Đông; quyền chọn Bitcoin đáo hạn 15:00 giờ VN. Tại TP.HCM, đợt tham quan 3 cống Bến Nghé, Tân Thuận, Mương Chuối diễn ra 27–28/11 với tối đa 1.000 người đã đăng ký; mực nước Phú An và Nhà Bè ở mức xấp xỉ hoặc trên báo động I đến hết 28/11. Phòng vé Việt đón loạt phim mới, dẫn đầu là “Running Man Việt Nam 2026: Về nhà”.</span></div></li>
+<li><span class="when">28–29/11</span><div class="what">Cuối tuần Sài Gòn: liveshow Hồ Văn Cường, minishow Đan Trường, lễ hội sách đêm<span>Tối 28/11 liveshow “Bước” của Hồ Văn Cường tại Nhà hát Bến Thành; tối 29/11 minishow “50 năm cuộc đời” của Đan Trường tại Nhà hát Thành phố và Annyeong HCMC Music Festival tại Vạn Phúc City. Ngày hội Sách và Văn hóa Đêm diễn ra 27–29/11 tại Đường sách Nguyễn Văn Bình. Hệ thống cống ngăn triều diễn tập vận hành 29–30/11.</span></div></li>
+<li><span class="when">29/11</span><div class="what">OPEC+ họp; mưa lớn Nam Trung Bộ còn kéo dài đến 30/11<span>OPEC+ họp Chủ Nhật 29/11, nhiều khả năng giữ nguyên mục tiêu sản lượng ít nhất đến quý 1/2027 nhưng chưa có quyết định. Dự báo mưa lớn diện rộng 200–400mm, cục bộ trên 600mm ở Nam Trung Bộ kéo dài đến 30/11 theo Công điện 76/CĐ-TTg.</span></div></li>
+<li><span class="when">Tháng 12</span><div class="what">Khánh thành hệ thống ngăn triều TP.HCM; loạt sự kiện âm nhạc cuối năm<span>Sau đợt vận hành liên hoàn 25/11 và diễn tập cuối tháng 11, dự án chống ngập 10.000 tỷ đồng dự kiến khánh thành trong tháng 12, bảo vệ khoảng 570 km² với khoảng 6,5 triệu dân. Tại TP.HCM còn có Musique de Salon 23 ngày 11/12, Những Thành Phố Mơ Màng ngày 12/12 và Liên hoan Âm nhạc Quốc tế “Hò dô” 25–27/12.</span></div></li>
+<li><span class="when">8–9/12</span><div class="what">Fed quyết định lãi suất<span>Thị trường định giá Fed tăng 0,25 điểm ngày 9/12 với xác suất khoảng 94–98% sau số PCE lõi 3,3%; báo cáo việc làm 4/12 và CPI tháng 11 ngày 10/12 là hai mốc kề cận. Thuế Điều 301 của Mỹ với 14 đối tác còn qua lấy ý kiến (hạn 5/1/2027) và điều trần từ 25/1/2027, quyết định cuối cùng sớm nhất tháng 2/2027.</span></div></li>
+</ul>
+</section>
+
+
+<section class="card wide">
+<h2>Tin hôm qua <span class="tag">Lưu trữ theo ngày</span></h2>
+<p class="sub">Các bản tin đã đăng — đọc lại nguyên vẹn, không chỉnh sửa.</p>
+<ul class="news" id="archive-list">
+<li><div class="h"><a href="/2026-11-26.html" style="color:var(--ink)">Thứ Năm 26/11/2026</a></div><p>PCE lõi 3,3%, GDP 4,3%: Phố Wall chao đảo rồi gỡ lại · Bitcoin lấy lại mốc 60.000 USD · 6 cống ngăn triều TP.HCM vận hành liên hoàn.</p></li>
+
+<li><div class="h"><a href="/2026-11-25.html" style="color:var(--ink)">Thứ Tư 25/11/2026</a></div><p>Dow vượt 50.000 điểm lần đầu, Nasdaq −1,48% · Bitcoin thủng 60.000 USD · Trưa 25/11: 6 cống ngăn triều TP.HCM vận hành liên hoàn.</p></li>
+<li><div class="h"><a href="/2026-11-24.html" style="color:var(--ink)">Thứ Ba 24/11/2026</a></div><p>Jensen Huang trở lại làm CEO Nvidia · Phố Wall tăng mạnh nhất từ tháng 4/2025 · Tối 24/11: pháo hoa Ngày Văn hóa Việt Nam.</p></li>
+<li><div class="h"><a href="/2026-11-23.html" style="color:var(--ink)">Thứ Hai 23/11/2026</a></div><p>Jensen Huang trở lại làm CEO Nvidia · Chứng khoán Mỹ tăng mạnh nhất từ tháng 4/2025 · VN-Index hồi lên 1.697,14 điểm.</p></li>
+<li><div class="h"><a href="/2026-11-22.html" style="color:var(--ink)">Chủ Nhật 22/11/2026</a></div><p>Bitcoin quét về 55.130 USD rồi hồi trên 60.000 USD · Ông Trump giục đưa Jensen Huang trở lại · Quốc hội bế mạc với 38 luật được thông qua.</p></li>
+<li><div class="h"><a href="/2026-11-21.html" style="color:var(--ink)">Thứ Bảy 21/11/2026</a></div><p>Bán tháo AI: Nasdaq −5,28%, S&amp;P 500 và Dow vào vùng điều chỉnh · Nvidia −14% sau tin SEC điều tra kế toán · Bitcoin thủng 60.000 USD.</p></li>
+<li><div class="h"><a href="/2026-11-20.html" style="color:var(--ink)">Thứ Sáu 20/11/2026</a></div><p>Tuyên bố hòa bình ở Thâm Quyến · Anthropic đóng cửa ngày đầu 97,17 USD · Chứng khoán Mỹ giảm phiên thứ sáu liên tiếp.</p></li>
+<li><div class="h"><a href="/2026-11-19.html" style="color:var(--ink)">Thứ Năm 19/11/2026</a></div><p>Gặp ba bên Trump – Putin – Tập ở Thâm Quyến · Biên bản FOMC diều hâu · Anthropic chốt giá IPO 83 USD, lên sàn Nasdaq.</p></li>
+<li><div class="h"><a href="/2026-11-18.html" style="color:var(--ink)">Thứ Tư 18/11/2026</a></div><p>Nvidia vượt kỳ vọng lớn: doanh thu 115,8 tỷ USD · Chứng khoán Mỹ giảm phiên thứ tư liên tiếp · Trump đến Manila, họp Quad.</p></li>
+<li><div class="h"><a href="/2026-11-17.html" style="color:var(--ink)">Thứ Ba 17/11/2026</a></div><p>Nasdaq vào vùng điều chỉnh trước giờ Nvidia báo cáo · Ukraine tấn công drone lớn nhất từ đầu chiến tranh · Trump lên đường đi Manila.</p></li>
+<li><div class="h"><a href="/2026-11-16.html" style="color:var(--ink)">Thứ Hai 16/11/2026</a></div><p>Bitcoin thủng 62.000 USD rồi hồi về ~65.000 USD · FAA hơn 17.000 chuyến hủy · Trump – Putin – Tập gặp ba bên 19/11 · SpaceX bắt được Starship từ quỹ đạo.</p></li>
+<li><div class="h"><a href="/2026-11-15.html" style="color:var(--ink)">Chủ Nhật 15/11/2026</a></div><p>Bitcoin thủng 65.000 USD · FAA dỡ lệnh dừng bay · Trump – Putin – Tập gặp ba bên 19/11 · Starship lên quỹ đạo, mất tầng đẩy.</p></li>
+<li><div class="h"><a href="/2026-11-14.html" style="color:var(--ink)">Thứ Bảy 14/11/2026</a></div><p>FAA dừng bay toàn quốc vì sự cố viễn thông · Bitcoin thủng 70.000 USD · Dublin: trao đổi tù binh lớn nhất từ đầu chiến tranh · PPI tháng 10 nhẹ hơn dự báo.</p></li>
+<li><div class="h"><a href="/2026-11-13.html" style="color:var(--ink)">Thứ Sáu 13/11/2026</a></div><p>Jensen Huang từ chức CEO Nvidia · Bitcoin thủng 72.000 USD · PPI tháng 10 nhẹ hơn dự báo · VN-Index −12,15 điểm, khối ngoại bán ròng &gt;900 tỷ.</p></li>
+<li><div class="h"><a href="/2026-11-12.html" style="color:var(--ink)">Thứ Năm 12/11/2026</a></div><p>Jensen Huang từ chức CEO Nvidia · Chứng khoán Mỹ giảm nhẹ, BTC thủng 72.000 USD · Moscow chưa thỏa hiệp về lãnh thổ · VN-Index −12,15 điểm, khối ngoại bán ròng &gt;900 tỷ.</p></li>
+<li><div class="h"><a href="/2026-11-11.html" style="color:var(--ink)">Thứ Tư 11/11/2026</a></div><p>CPI tháng 10 nóng +0,4% · Luận tội Hegseth bị chặn 211–204 · Chứng khoán Mỹ quay đầu, Nvidia −5,47% · Đàm phán Nga – Ukraine ngày 2 ở Abu Dhabi.</p></li>
+<li><div class="h"><a href="/2026-11-10.html" style="color:var(--ink)">Thứ Ba 10/11/2026</a></div><p>CPI tháng 10 tối 20:30 (kỳ vọng +0,3%) · Luận tội Hegseth bỏ phiếu thứ Tư · Chứng khoán Mỹ bật mạnh, BTC quanh 74.200 USD · Bão số 14 Fung-Wong vào Biển Đông.</p></li>
+<li><div class="h"><a href="/2026-11-09.html" style="color:var(--ink)">Thứ Hai 9/11/2026</a></div><p>Stephen Miller nhậm chức Chánh văn phòng · Hạ viện trở lại, Massie ép bỏ phiếu luận tội Hegseth · CPI tháng 10 chờ công bố tối 10/11 · Siêu bão Fung-Wong đổ bộ Philippines.</p></li>
+<li><div class="h"><a href="/2026-11-08.html" style="color:var(--ink)">Chủ Nhật 8/11/2026</a></div><p>Berkshire Hathaway quý 3: doanh thu vượt kỳ vọng · Stephen Miller nhậm chức Chánh văn phòng 9/11 · Mưa lũ sau bão Kalmaegi, thiệt hại tăng.</p></li>
+<li><div class="h"><a href="/2026-11-07.html" style="color:var(--ink)">Thứ Bảy 7/11/2026</a></div><p>Mỹ – Iran: đã có đòn đánh, vẫn đang đối thoại · Berkshire Hathaway trước giờ công bố quý 3 · Bão Kalmaegi đổ bộ Gia Lai – Đắk Lắk.</p></li>
+</ul>
+<nav class="pager" id="archive-pager" aria-label="Trang lưu trữ">
+<button type="button" id="archive-prev">← Trước</button>
+<span id="archive-pageinfo">Trang 1</span>
+<button type="button" id="archive-next">Sau →</button>
+</nav>
+</section>
+
+</div>
+</main>
+<p class="bottom-note">Giá Bitcoin, S&amp;P 500, Nasdaq và Dow Jones tự cập nhật khi có mạng — kèm tổng hợp tin sáng Thứ Sáu 27/11: đính chính thuế Mỹ với Việt Nam tối đa 35% khiến VN-Index rơi 57,77 điểm, Phố Wall mở lại phiên rút ngắn sau Lễ Tạ ơn, và cống ngăn triều TP.HCM chỉ mở tham quan 27–28/11 cho người đã đăng ký.</p>
+<footer>Tổng hợp tin — phần tin tổng hợp đến sáng Thứ Sáu 27/11/2026 (giờ Việt Nam). Giá live lấy trực tiếp từ Binance (BTC) và Stooq/Yahoo Finance (chỉ số Mỹ, miễn phí nên có thể trễ ~15 phút) ngay trong trình duyệt của người xem.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+try{var dl=$("dateline-link");if(dl)dl.textContent=new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});}catch(e){}
+function fmt(n,d){return Number(n).toLocaleString("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtPct(p){var s=(p>=0?"+":"−")+fmt(Math.abs(p),2)+"%";return s;}
+function nowStr(){return new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});}
+function fetchT(url,ms){var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||9000);return fetch(url,{signal:c.signal,cache:"no-store"}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error("HTTP "+r.status);return r;}).catch(function(e){clearTimeout(t);throw e;});}
+function fetchJson(url,ms){return fetchT(url,ms).then(function(r){return r.json();});}
+function fetchText(url,ms){return fetchT(url,ms).then(function(r){return r.text();});}
+function proxied(url){return [url,"https://api.allorigins.win/raw?url="+encodeURIComponent(url),"https://corsproxy.io/?url="+encodeURIComponent(url)];}
+function tryUrls(urls,reader){var p=Promise.reject(new Error("start"));urls.forEach(function(u){p=p.catch(function(){return reader(u);});});return p;}
+function setCard(id,priceHtml,chgPct,metaHtml){
+ var card=$(id);if(!card)return;
+ card.querySelector('[data-field="price"]').textContent=priceHtml;
+ var chg=card.querySelector('[data-field="chg"]');
+ if(chgPct===null){chg.textContent="—";chg.className="chg";}
+ else{chg.textContent=fmtPct(chgPct);chg.className="chg "+(chgPct>=0?"up":"down");}
+ card.querySelector('[data-field="meta"]').innerHTML=metaHtml;
+}
+var state={btc:false,idx:0,idxTotal:3};
+function status(){
+ var dot=$("livedot"),txt=$("livestatus");
+ if(state.btc&&state.idx===state.idxTotal){dot.className="dot";txt.textContent="Đang live — giá tự cập nhật";}
+ else if(state.btc||state.idx>0){dot.className="dot";txt.textContent="Live một phần ("+(state.btc?1:0)+"/1 crypto · "+state.idx+"/"+state.idxTotal+" chỉ số Mỹ)";}
+ else{dot.className="dot err";txt.textContent="Chưa lấy được giá live — đang hiện ảnh chụp đóng cửa 25/11";}
+ $("lastupdate").textContent="Lần cập nhật giá: "+nowStr()+" (giờ của bạn)";
+}
+
+function loadBTC(){
+ var urls=["https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDT","https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT","https://api1.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT"];
+ return tryUrls(urls,function(u){return fetchJson(u);}).then(function(d){
+  var price=parseFloat(d.lastPrice),pct=parseFloat(d.priceChangePercent);
+  if(!isFinite(price))throw new Error("bad data");
+  state.btc=true;
+  setCard("card-btc",fmt(price,0)+" USD",pct,
+   "Cao 24h: "+fmt(d.highPrice,0)+" · Thấp 24h: "+fmt(d.lowPrice,0)+" USD<br>Nguồn: Binance (thời gian thực) · Cập nhật: "+nowStr());
+ }).catch(function(){
+  return fetchJson("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true").then(function(d){
+   var b=d.bitcoin;if(!b)throw new Error("bad data");state.btc=true;
+   setCard("card-btc",fmt(b.usd,0)+" USD",b.usd_24h_change,
+    "Nguồn dự phòng: CoinGecko · Cập nhật: "+nowStr());
+  }).catch(function(){state.btc=false;});
+ });
+}
+function parseYahoo(j,label){
+ var r=j&&j.chart&&j.chart.result&&j.chart.result[0];if(!r||!r.meta)throw new Error("bad yahoo");
+ var m=r.meta,price=m.regularMarketPrice,prev=m.chartPreviousClose||m.previousClose;
+ if(!isFinite(price))throw new Error("bad price");
+ var pct=prev?((price-prev)/prev*100):null;
+ var t=m.regularMarketTime?new Date(m.regularMarketTime*1000).toLocaleString("vi-VN"):"—";
+ return {price:price,pct:pct,meta:"Sàn: "+(m.exchangeName||"Mỹ")+" · Giờ dữ liệu: "+t+"<br>Nguồn: Yahoo Finance qua "+label+" (miễn phí, có thể trễ ~15 phút) · Cập nhật: "+nowStr()};
+}
+function loadYahoo(sym,label){
+ var base="https://query2.finance.yahoo.com/v8/finance/chart/"+encodeURIComponent(sym)+"?interval=1m&range=1d";
+ var urls=[base,"https://api.allorigins.win/raw?url="+encodeURIComponent(base),"https://corsproxy.io/?url="+encodeURIComponent(base)];
+ var names=["Yahoo trực tiếp","proxy (AllOrigins)","proxy (corsproxy.io)"];
+ var p=Promise.reject(new Error("start"));
+ urls.forEach(function(u,i){p=p.catch(function(){return fetchJson(u).then(function(j){return parseYahoo(j,names[i]);});});});
+ return p;
+}
+function parseStooq(text,symLabel){
+ var lines=text.trim().split(/\r?\n/);if(lines.length<2)throw new Error("bad csv");
+ var h=lines[0].split(","),row=lines[1].split(",");
+ var o={};h.forEach(function(k,i){o[k.trim()]=row[i];});
+ var close=parseFloat(o.Close),open=parseFloat(o.Open);
+ if(!isFinite(close)||o.Close==="N/D")throw new Error("no data");
+ var pct=isFinite(open)&&open!==0?((close-open)/open*100):null;
+ return {price:close,pct:pct,meta:"Cao ngày: "+o.High+" · Thấp ngày: "+o.Low+" · "+(o.Date||"")+" "+(o.Time||"")+"<br>Nguồn: Stooq ("+symLabel+", % thay đổi tính so với giá mở cửa) · Cập nhật: "+nowStr()};
+}
+function loadStooq(sym){
+ var base="https://stooq.com/q/l/?s="+encodeURIComponent(sym)+"&f=sd2t2ohlcv&h&e=csv";
+ return tryUrls(proxied(base),function(u){return fetchText(u);}).then(function(t){return parseStooq(t,sym);});
+}
+
+function loadIndex(cfg){
+ var attempts=[
+  function(){return loadYahoo(cfg.yahoo,cfg.name);},
+  function(){return loadStooq(cfg.stooq);},
+  function(){return loadYahoo(cfg.etf,cfg.name+" qua ETF "+cfg.etf);},
+  function(){return loadStooq(cfg.etf.toLowerCase()+".us");}
+ ];
+ var p=Promise.reject(new Error("start"));
+ attempts.forEach(function(fn){p=p.catch(fn);});
+ return p.then(function(res){
+  state.idx++;
+  var note=(res.meta.indexOf(cfg.etf)>=0||res.meta.indexOf("ETF")>=0)?" (qua ETF "+cfg.etf+")":"";
+  setCard(cfg.id,fmt(res.price,2),res.pct,res.meta+note);
+ }).catch(function(){/* giữ nguyên ảnh chụp đóng cửa 25/11 đã ghi sẵn trong thẻ */});
+}
+var INDICES=[
+ {id:"card-spx",name:"S&P 500",yahoo:"^GSPC",stooq:"^spx",etf:"SPY"},
+ {id:"card-nasdaq",name:"Nasdaq",yahoo:"^IXIC",stooq:"^ndq",etf:"QQQ"},
+ {id:"card-dow",name:"Dow Jones",yahoo:"^DJI",stooq:"^dji",etf:"DIA"}
+];
+function refreshBTC(){return loadBTC().then(status).catch(status);}
+function refreshIndices(){state.idx=0;return Promise.all(INDICES.map(loadIndex)).then(status).catch(status);}
+function refreshAll(){return Promise.all([refreshBTC(),refreshIndices()]);}
+var BTC_MS=20000,nextAt=Date.now()+BTC_MS;
+$("refreshbtn").addEventListener("click",function(){refreshAll();nextAt=Date.now()+BTC_MS;});
+refreshAll();
+setInterval(function(){refreshBTC();nextAt=Date.now()+BTC_MS;},BTC_MS);
+setInterval(refreshIndices,60000);
+setInterval(function(){
+ var s=Math.max(0,Math.round((nextAt-Date.now())/1000));
+ $("nextupdate").textContent="Tự làm mới sau: "+s+" giây";
+},1000);
+})();
+/* Nut len dau trang: hien khi cuon xuong qua 300px */
+function toTopInit(){
+var toTopBtn=document.getElementById("toTopBtn");
+if(!toTopBtn)return;
+function toTopShow(){toTopBtn.style.display=(window.scrollY>300)?"flex":"none";}
+window.addEventListener("scroll",toTopShow,{passive:true});
+toTopShow();
+}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",toTopInit);}else{toTopInit();}
+</script>
+
+<script>
+(function(){
+var list=document.getElementById("archive-list");
+if(!list) return;
+var items=list.querySelectorAll("li");
+var per=3, page=0, pages=Math.max(1,Math.ceil(items.length/per));
+var prev=document.getElementById("archive-prev"),
+    next=document.getElementById("archive-next"),
+    info=document.getElementById("archive-pageinfo"),
+    pager=document.getElementById("archive-pager");
+function show(n){
+  page=Math.max(0,Math.min(n,pages-1));
+  items.forEach(function(li,i){li.style.display=(i>=page*per && i<(page+1)*per)?"":"none";});
+  if(info) info.textContent="Trang "+(page+1)+" / "+pages;
+  if(prev) prev.disabled=(page===0);
+  if(next) next.disabled=(page===pages-1);
+  if(pager) pager.style.display=(pages<=1)?"none":"flex";
+}
+if(prev) prev.addEventListener("click",function(){show(page-1);});
+if(next) next.addEventListener("click",function(){show(page+1);});
+show(0);
+})();
+</script>
+<button id="toTopBtn" type="button" title="Lên đầu trang" aria-label="Lên đầu trang" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="display:none;position:fixed;right:16px;bottom:16px;width:48px;height:48px;border:1px solid #d8d8d8;border-radius:12px;background:#ffffff;box-shadow:0 2px 12px rgba(0,0,0,.2);color:#333;font-size:24px;line-height:1;cursor:pointer;z-index:9999;align-items:center;justify-content:center">↑</button>
+</body>
+</html>
